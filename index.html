@@ -366,7 +366,7 @@
             fill: currentColor; /* Use fill for the new icon */
         }
 
-        /* Media Queries for Responsive Design (Mobile First) - Re-introduced for responsiveness */
+        /* Media Queries for Responsive Design (Mobile First) */
         @media (max-width: 768px) {
             body {
                 padding: 10px; /* Reduce body padding on smaller screens */
@@ -531,8 +531,6 @@
     </div>
 
     <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-
     <script>
         // Define size values for S, M, L QR Code image
         const qrImageSizeMap = {
@@ -540,8 +538,6 @@
             'medium': 256,
             'large': 512
         };
-
-        // Removed deviceWidthMap as device buttons are removed
 
         // Get DOM elements
         const appTitleElement = document.querySelector('h1');
@@ -559,13 +555,10 @@
         const clearSettingsBtn = document.getElementById('clearSettingsBtn'); 
 
         const sizeButtons = document.querySelectorAll('.size-buttons-group button');
-        // Removed deviceButtons query selection
-        const containerElement = document.querySelector('.container'); // Still need container for initial width
 
         let qrCodeInstance = null;
         let logoImage = null;
         let currentQrImageSize = qrImageSizeMap.medium; // Default QR image size
-        // Removed currentDeviceWidth
 
         // Function to show a custom message box
         function showMessage(message, type = 'success', format = null) {
@@ -650,9 +643,9 @@
                 ctx.drawImage(generatedCanvas, 0, qrCodeYOffset, currentQrImageSize, currentQrImageSize); // Use currentQrImageSize
 
                 if (logoImage) {
-                    const logoSize = currentQrImageSize * 0.25; // Use currentQrImageSize
-                    const x = (currentQrImageSize - logoSize) / 2; // Use currentQrImageSize
-                    const y = (currentQrImageSize - logoSize) / 2; // Use currentQrImageSize
+                    const logoSize = currentQrImageSize * 0.25;
+                    const x = (currentQrImageSize - logoSize) / 2;
+                    const y = (currentQrImageSize - logoSize) / 2;
                     ctx.drawImage(logoImage, x, y + qrCodeYOffset, logoSize, logoSize);
                 }
 
@@ -704,25 +697,21 @@
                 return;
             }
 
-            html2canvas(qrCanvas, {
-                backgroundColor: null,
-                useCORS: true
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `qrcode.${format}`;
-                if (format === 'png') {
-                    link.href = canvas.toDataURL('image/png');
-                } else if (format === 'jpg') {
-                    link.href = canvas.toDataURL('image/jpeg', 0.9);
-                }
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                showMessage("QR Code downloaded as {format} successfully!", 'success', format);
-            }).catch(error => {
-                console.error('Error during html2canvas:', error);
-                showMessage("Error during download.", 'error');
-            });
+            // Attempt to download using a simple anchor tag with Data URL
+            const link = document.createElement('a');
+            link.download = `qrcode.${format}`;
+            if (format === 'png') {
+                link.href = qrCanvas.toDataURL('image/png');
+            } else if (format === 'jpg') {
+                link.href = qrCanvas.toDataURL('image/jpeg', 0.9);
+            }
+
+            // Append to body and trigger click
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link); // Clean up the link element
+
+            showMessage("QR Code downloaded as {format} successfully!", 'success', format);
         }
 
         // Event listeners for QR Image Size buttons (Small, Medium, Large)
@@ -755,12 +744,24 @@
                 defaultQrSizeButton.classList.add('active-size');
             }
 
-            // No device width reset needed as device buttons are removed
-
             // Regenerate QR code with default settings
             generateQRCode();
             showMessage("Settings cleared to default values.", 'success');
         });
+
+        // --- ADDED MISSING EVENT LISTENERS HERE ---
+        // Event listener for Generate button
+        generateBtn.addEventListener('click', generateQRCode);
+
+        // Event listeners for Download buttons
+        downloadPngBtn.addEventListener('click', () => {
+            downloadQRCode('png');
+        });
+
+        downloadJpgBtn.addEventListener('click', () => {
+            downloadQRCode('jpg');
+        });
+        // --- END ADDED MISSING EVENT LISTENERS ---
 
 
         // Initial generation on load
