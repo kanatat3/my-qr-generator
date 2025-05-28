@@ -18,7 +18,7 @@
             min-height: 100vh; /* Full viewport height */
             padding: 20px; /* Padding around the main container */
             overflow-y: auto; /* Allow vertical scrolling if content overflows */
-            overflow-x: hidden; /* Prevent horizontal scrolling */
+            overflow-x: hidden; /* Prevent horizontal scrolling on responsive layout */
             color: #6B5E55; /* Lighter dark brown for all body text */
         }
 
@@ -28,8 +28,8 @@
             border-radius: 24px; /* Highly rounded corners for a modern look */
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15); /* Soft, prominent shadow for depth */
             padding: 35px; /* Internal padding */
-            width: 100%; /* Full width up to max-width */
-            max-width: 950px; /* Maximum width for the container on larger screens */
+            width: 100%; /* Responsive width */
+            max-width: 950px; /* Max width for the container on larger screens */
             display: flex;
             flex-direction: column; /* Stack elements vertically */
             gap: 28px; /* Space between major sections */
@@ -363,11 +363,10 @@
         .clear-settings-button svg {
             width: 24px; /* Size of the SVG icon */
             height: 24px;
-            stroke: currentColor; /* Use the button's text color for the SVG stroke */
+            fill: currentColor; /* Use fill for the new icon */
         }
 
-
-        /* Media Queries for Responsive Design (Mobile First) */
+        /* Media Queries for Responsive Design (Mobile First) - Re-introduced for responsiveness */
         @media (max-width: 768px) {
             body {
                 padding: 10px; /* Reduce body padding on smaller screens */
@@ -376,6 +375,7 @@
                 padding: 20px; /* Reduce container padding on mobile */
                 gap: 15px; /* Reduce gap between sections on mobile */
                 max-width: 100%; /* Ensure container takes full width on mobile */
+                width: 100%; /* Ensure width is responsive on mobile */
             }
             h1 {
                 font-size: 2rem; /* Adjust heading size for mobile */
@@ -443,6 +443,7 @@
             .size-buttons-group button {
                 width: 100%; /* Full width for stacked size buttons */
             }
+            /* Clear settings button on mobile */
             .clear-settings-button-wrapper {
                 position: static; /* Remove absolute positioning on mobile */
                 width: 100%; /* Take full width */
@@ -533,12 +534,14 @@
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
     <script>
-        // Define size values
-        const sizeMap = {
+        // Define size values for S, M, L QR Code image
+        const qrImageSizeMap = {
             'small': 128,
             'medium': 256,
             'large': 512
         };
+
+        // Removed deviceWidthMap as device buttons are removed
 
         // Get DOM elements
         const appTitleElement = document.querySelector('h1');
@@ -556,10 +559,13 @@
         const clearSettingsBtn = document.getElementById('clearSettingsBtn'); 
 
         const sizeButtons = document.querySelectorAll('.size-buttons-group button');
+        // Removed deviceButtons query selection
+        const containerElement = document.querySelector('.container'); // Still need container for initial width
 
         let qrCodeInstance = null;
         let logoImage = null;
-        let currentQrSize = sizeMap.medium; // Default size
+        let currentQrImageSize = qrImageSizeMap.medium; // Default QR image size
+        // Removed currentDeviceWidth
 
         // Function to show a custom message box
         function showMessage(message, type = 'success', format = null) {
@@ -598,21 +604,21 @@
                 qrCodeYOffset = titleAreaHeight;
             }
 
-            const totalCanvasHeight = currentQrSize + titleAreaHeight;
+            const totalCanvasHeight = currentQrImageSize + titleAreaHeight; // Use currentQrImageSize
 
             qrcodeContainer.innerHTML = '';
             qrCanvas.style.display = 'none';
 
             const tempQrDiv = document.createElement('div');
-            tempQrDiv.style.width = `${currentQrSize}px`;
-            tempQrDiv.style.height = `${currentQrSize}px`;
+            tempQrDiv.style.width = `${currentQrImageSize}px`; // Use currentQrImageSize
+            tempQrDiv.style.height = `${currentQrImageSize}px`; // Use currentQrImageSize
             tempQrDiv.style.display = 'none';
             document.body.appendChild(tempQrDiv);
 
             qrCodeInstance = new QRCode(tempQrDiv, {
                 text: qrData,
-                width: currentQrSize,
-                height: currentQrSize,
+                width: currentQrImageSize, // Use currentQrImageSize
+                height: currentQrImageSize, // Use currentQrImageSize
                 colorDark: qrColor,
                 colorLight: bgColor,
                 correctLevel: QRCode.CorrectLevel.H
@@ -626,27 +632,27 @@
                     return;
                 }
 
-                qrCanvas.width = currentQrSize;
+                qrCanvas.width = currentQrImageSize; // Use currentQrImageSize
                 qrCanvas.height = totalCanvasHeight;
                 const ctx = qrCanvas.getContext('2d');
 
                 ctx.fillStyle = bgColor;
-                ctx.fillRect(0, 0, currentQrSize, totalCanvasHeight);
+                ctx.fillRect(0, 0, currentQrImageSize, totalCanvasHeight); // Use currentQrImageSize
 
                 if (imageTitle) {
                     ctx.font = `${titleFontSize}px Inter, sans-serif`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     ctx.fillStyle = qrColor;
-                    ctx.fillText(imageTitle, currentQrSize / 2, titleAreaHeight / 2);
+                    ctx.fillText(imageTitle, currentQrImageSize / 2, titleAreaHeight / 2); // Use currentQrImageSize
                 }
 
-                ctx.drawImage(generatedCanvas, 0, qrCodeYOffset, currentQrSize, currentQrSize);
+                ctx.drawImage(generatedCanvas, 0, qrCodeYOffset, currentQrImageSize, currentQrImageSize); // Use currentQrImageSize
 
                 if (logoImage) {
-                    const logoSize = currentQrSize * 0.25;
-                    const x = (currentQrSize - logoSize) / 2;
-                    const y = (currentQrSize - logoSize) / 2;
+                    const logoSize = currentQrImageSize * 0.25; // Use currentQrImageSize
+                    const x = (currentQrImageSize - logoSize) / 2; // Use currentQrImageSize
+                    const y = (currentQrImageSize - logoSize) / 2; // Use currentQrImageSize
                     ctx.drawImage(logoImage, x, y + qrCodeYOffset, logoSize, logoSize);
                 }
 
@@ -719,23 +725,19 @@
             });
         }
 
-        // Event listeners for size buttons
+        // Event listeners for QR Image Size buttons (Small, Medium, Large)
         sizeButtons.forEach(button => {
             button.addEventListener('click', () => {
-                // Remove active class from all buttons
                 sizeButtons.forEach(btn => btn.classList.remove('active-size'));
-                // Add active class to the clicked button
                 button.classList.add('active-size');
-                // Update currentQrSize based on data-size attribute
-                currentQrSize = parseInt(button.dataset.size);
-                // Regenerate QR code with new size
+                currentQrImageSize = parseInt(button.dataset.size); // Update QR image size
                 if (qrDataInput.value.trim()) {
                     generateQRCode();
                 }
             });
         });
 
-        // New: Event listener for Clear Settings button
+        // Event listener for Clear Settings button
         clearSettingsBtn.addEventListener('click', () => {
             // Reset all input fields to default values
             qrDataInput.value = "https://www.google.com";
@@ -745,13 +747,15 @@
             logoInput.value = ""; // Clear selected file
             logoImage = null; // Clear loaded logo image
 
-            // Reset size to medium and update active button
-            currentQrSize = sizeMap.medium;
+            // Reset QR image size to medium and update active button
+            currentQrImageSize = qrImageSizeMap.medium;
             sizeButtons.forEach(btn => btn.classList.remove('active-size'));
-            const defaultSizeButton = document.querySelector(`.size-buttons-group button[data-size="${sizeMap.medium}"]`);
-            if (defaultSizeButton) {
-                defaultSizeButton.classList.add('active-size');
+            const defaultQrSizeButton = document.querySelector(`.size-buttons-group button[data-size="${qrImageSizeMap.medium}"]`);
+            if (defaultQrSizeButton) {
+                defaultQrSizeButton.classList.add('active-size');
             }
+
+            // No device width reset needed as device buttons are removed
 
             // Regenerate QR code with default settings
             generateQRCode();
@@ -761,10 +765,10 @@
 
         // Initial generation on load
         window.onload = () => {
-            // Set default active size button
-            const defaultSizeButton = document.querySelector(`.size-buttons-group button[data-size="${sizeMap.medium}"]`);
-            if (defaultSizeButton) {
-                defaultSizeButton.classList.add('active-size');
+            // Set default active QR image size button
+            const defaultQrSizeButton = document.querySelector(`.size-buttons-group button[data-size="${qrImageSizeMap.medium}"]`);
+            if (defaultQrSizeButton) {
+                defaultQrSizeButton.classList.add('active-size');
             }
             generateQRCode();
         };
