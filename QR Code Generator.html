@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Light brown-pink gradient background */
+            background: linear-gradient(135deg, #fdf4f5 0%, #fef0f1 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-y: auto; /* Allow body scrollbar */
+            overflow-x: hidden; /* Keep horizontal hidden */
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 24px; /* More rounded corners */
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15); /* Stronger, softer shadow */
+            padding: 35px;
+            width: 100%;
+            max-width: 950px; /* Slightly wider container to accommodate new layout */
+            display: flex;
+            flex-direction: column;
+            gap: 28px; /* Increased spacing */
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #4a4e69; /* Muted dark blue-gray for heading */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px; /* Increased gap */
+        }
+        label {
+            font-weight: 600;
+            color: #7a7c8e; /* Softer muted blue-gray label color */
+            font-size: 0.95rem;
+        }
+        input[type="text"],
+        input[type="number"],
+        input[type="color"],
+        input[type="file"] {
+            padding: 14px 18px; /* More padding */
+            border: 1px solid #e0e0e0; /* Lighter border */
+            border-radius: 12px; /* More rounded inputs */
+            font-size: 1rem;
+            color: #2d3748; /* Darker input text */
+            background-color: #fcfcfc; /* Light background for inputs */
+            transition: all 0.3s ease-in-out;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="color"]:focus,
+        input[type="file"]:focus {
+            outline: none;
+            border-color: #d4a373; /* Soft, warm brown on focus */
+            box-shadow: 0 0 0 4px rgba(212, 163, 115, 0.3); /* Softer focus shadow */
+            background-color: #ffffff;
+        }
+        input[type="file"] {
+            cursor: pointer;
+        }
+        input[type="color"] {
+            height: 48px; /* Consistent height */
+            padding: 5px; /* Adjust padding for color picker */
+        }
+
+        /* Main content area for QR code, and settings/buttons */
+        .main-content-area {
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            gap: 25px;
+            justify-content: center; /* Center items when wrapped */
+            align-items: flex-start; /* Align items at the top */
+        }
+
+        /* Left Panel: Only QR Code Display */
+        .qr-display-panel { /* Renamed from qr-and-buttons-panel */
+            flex: 1; /* Allow it to grow */
+            min-width: 300px; /* Ensure it doesn't get too small */
+            max-width: 380px; /* Control its max width */
+            display: flex; /* Use flex to center its content */
+            flex-direction: column; /* Stack QR and buttons (if they were here) */
+            align-items: center; /* Center QR code horizontally within this panel */
+            gap: 20px; /* Space between QR and buttons (if they were here) */
+        }
+
+        /* QR Code Container - adjust max-width and height for smaller frame */
+        #qrcode-container {
+            width: 100%; /* Take full width of its parent */
+            max-width: 300px; /* Make it slightly smaller as requested */
+            height: 300px; /* Fixed height for a square frame */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8fafc; /* White background for QR code display */
+            border: 2px dashed #c0c0c0; /* More prominent dashed border (medium gray) */
+            border-radius: 16px; /* More rounded */
+            padding: 10px; /* Smaller padding for QR frame */
+            overflow: hidden;
+            transition: all 0.3s ease-in-out;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        #qrcode-container canvas {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px; /* Rounded QR code canvas */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Shadow for the QR code itself */
+        }
+
+        /* Right Panel: Settings and Buttons */
+        .right-panel {
+            flex: 2; /* Right panel takes more space */
+            display: flex;
+            flex-direction: column; /* Stack settings grid and button group */
+            gap: 25px; /* Space between settings grid and button group */
+            min-width: 300px; /* Minimum width for right panel */
+        }
+
+        /* Settings Grid (Colors, Size, Logo) */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Adjust minmax for 4 items in a row */
+            gap: 20px; /* Gap between setting items */
+            align-items: flex-start;
+        }
+        .settings-grid .input-group,
+        .settings-grid .color-picker-item {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Button Group - now horizontal, below settings */
+        .button-group {
+            display: flex; /* Make buttons horizontal */
+            flex-direction: row; /* Explicitly row */
+            flex-wrap: wrap; /* Allow wrapping on very small screens */
+            gap: 10px; /* Space between horizontal buttons */
+            justify-content: center; /* Center buttons horizontally */
+            width: 100%; /* Take full width of its parent (.right-panel) */
+            margin-top: 5px; /* Small margin from settings above */
+        }
+        .button-group button {
+            flex: 1; /* Allow buttons to share space */
+            min-width: 100px; /* Minimum width for each button before wrapping */
+            max-width: 150px; /* Max width for each button */
+            padding: 12px 20px; /* Slightly less padding for horizontal buttons */
+        }
+
+        button {
+            padding: 14px 30px; /* More padding */
+            border-radius: 12px; /* More rounded buttons */
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Stronger button shadow */
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-size: 0.95rem;
+        }
+        button.primary {
+            /* Soft rose/pink gradient */
+            background: linear-gradient(45deg, #e0a0a0, #d48c8c);
+            color: #ffffff;
+            border: none;
+        }
+        button.primary:hover {
+            /* Darker rose/pink gradient on hover */
+            background: linear-gradient(45deg, #d48c8c, #c07a7a);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        button.secondary {
+            background-color: #f5f5f5; /* Very light gray */
+            color: #7a7c8e; /* Dark gray text */
+            border: 1px solid #e0e0e0;
+        }
+        button.secondary:hover {
+            background-color: #e9e9e9; /* Slightly darker gray on hover */
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Custom Message Box Styles */
+        .message-box {
+            position: fixed;
+            top: 25px; /* Slightly lower */
+            left: 50%;
+            transform: translateX(-50%);
+            /* Muted light green for success */
+            background-color: #a8d8b9;
+            color: #333333; /* Darker text for contrast */
+            padding: 18px 25px; /* More padding */
+            border-radius: 12px; /* More rounded */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25); /* Stronger shadow */
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+            font-weight: 500;
+            min-width: 250px;
+            text-align: center;
+        }
+        .message-box.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        .message-box.error {
+            /* Muted light red for error */
+            background-color: #f0a0a0;
+            color: #333333;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3); /* Lighter spinner border */
+            border-left-color: #e0a0a0; /* Matching primary button color */
+            border-radius: 50%;
+            width: 20px; /* Slightly smaller spinner */
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px; /* Reduce body padding on smaller screens */
+            }
+            .container {
+                padding: 20px; /* Reduce container padding on mobile */
+                gap: 15px; /* Reduce gap on mobile */
+                max-width: 100%; /* Ensure container takes full width on mobile */
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            /* Stack main content area items on mobile */
+            .main-content-area {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .qr-display-panel { /* Renamed from qr-and-buttons-panel */
+                max-width: 100%; /* Take full width */
+                min-width: unset;
+            }
+            #qrcode-container {
+                max-width: 100%; /* Allow QR container to take full width on mobile */
+                height: 250px; /* Adjust fixed height for mobile */
+                min-width: unset;
+            }
+            .button-group {
+                flex-direction: column; /* Stack buttons vertically on mobile */
+                align-items: stretch; /* Stretch buttons */
+                gap: 12px;
+            }
+            .button-group button {
+                width: 100%; /* Full width for stacked buttons */
+                min-width: unset;
+                max-width: unset;
+            }
+            .right-panel {
+                flex: unset; /* Remove flex sizing on mobile */
+                width: 100%; /* Take full width */
+                min-width: unset;
+                gap: 20px; /* Adjust gap for mobile */
+            }
+            .settings-grid {
+                grid-template-columns: 1fr; /* Stack settings on mobile */
+                gap: 15px;
+            }
+            .settings-grid .input-group,
+            .settings-grid .color-picker-item {
+                min-width: unset;
+            }
+            button {
+                padding: 12px 20px; /* Slightly less padding for buttons */
+            }
+            input[type="text"],
+            input[type="number"],
+            input[type="color"],
+            input[type="file"] {
+                padding: 12px 15px; /* Slightly less padding for inputs */
+            }
+            input[type="color"] {
+                height: 44px; /* Adjust height for consistency */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-3xl font-bold text-center mb-4">เครื่องสร้าง QR Code</h1>
+
+        <div id="messageBox" class="message-box"></div>
+
+        <div class="input-group">
+            <label for="qrData">ข้อมูล QR Code (ข้อความหรือ URL):</label>
+            <input type="text" id="qrData" placeholder="เช่น https://www.example.com หรือ ข้อความของคุณ" value="https://www.google.com">
+        </div>
+
+        <div class="input-group">
+            <label for="qrDataTopic">หัวข้อสำหรับแนะนำข้อมูล QR Code:</label>
+            <input type="text" id="qrDataTopic" placeholder="เช่น โปรโมชั่นร้านกาแฟ, ข้อมูลติดต่อ">
+            <button id="suggestQrDataBtn" class="primary">✨ แนะนำข้อมูล QR Code</button>
+        </div>
+
+        <div class="main-content-area">
+            <div class="qr-display-panel">
+                <div id="qrcode-container">
+                    <canvas id="qrCanvas" style="display: none;"></canvas>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <div class="settings-grid">
+                    <div class="color-picker-item">
+                        <label for="qrColor">สี QR Code:</label>
+                        <input type="color" id="qrColor" value="#000000">
+                    </div>
+                    <div class="color-picker-item">
+                        <label for="bgColor">สีพื้นหลัง:</label>
+                        <input type="color" id="bgColor" value="#ffffff">
+                    </div>
+                    <div class="input-group">
+                        <label for="qrSize">ขนาดภาพ (พิกเซล):</label>
+                        <input type="number" id="qrSize" value="256" min="50" max="99999">
+                    </div>
+                    <div class="input-group">
+                        <label for="logoInput">แทรกโลโก้ (PNG/JPG):</label>
+                        <input type="file" id="logoInput" accept="image/png, image/jpeg">
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button id="generateBtn" class="primary">สร้าง QR Code</button>
+                    <button id="downloadPngBtn" class="secondary">ดาวน์โหลด PNG</button>
+                    <button id="downloadJpgBtn" class="secondary">ดาวน์โหลด JPG</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+    <script>
+        // Get DOM elements
+        const qrDataInput = document.getElementById('qrData');
+        const qrDataTopicInput = document.getElementById('qrDataTopic');
+        const suggestQrDataBtn = document.getElementById('suggestQrDataBtn');
+        const qrColorInput = document.getElementById('qrColor');
+        const bgColorInput = document.getElementById('bgColor');
+        const qrSizeInput = document.getElementById('qrSize');
+        const logoInput = document.getElementById('logoInput');
+        const generateBtn = document.getElementById('generateBtn');
+        const downloadPngBtn = document.getElementById('downloadPngBtn');
+        const downloadJpgBtn = document.getElementById('downloadJpgBtn');
+        const qrcodeContainer = document.getElementById('qrcode-container');
+        const qrCanvas = document.getElementById('qrCanvas');
+        const messageBox = document.getElementById('messageBox');
+
+        let qrCodeInstance = null; // To store the QRCode object
+        let logoImage = null; // To store the uploaded logo image
+
+        // Function to show a custom message box
+        function showMessage(message, type = 'success') {
+            messageBox.textContent = message;
+            messageBox.className = `message-box show ${type}`; // Add type class for styling
+            setTimeout(() => {
+                messageBox.className = `message-box ${type}`; // Hide after a delay
+            }, 3000);
+        }
+
+        // Function to generate QR Code
+        function generateQRCode() {
+            const qrData = qrDataInput.value.trim();
+            const qrColor = qrColorInput.value;
+            const bgColor = bgColorInput.value;
+            const qrSize = parseInt(qrSizeInput.value);
+
+            if (!qrData) {
+                showMessage('กรุณาป้อนข้อมูลสำหรับ QR Code', 'error');
+                return;
+            }
+            if (isNaN(qrSize) || qrSize < 50 || qrSize > 99999) { // Updated max value
+                showMessage('ขนาดภาพไม่ถูกต้อง (50-99999 พิกเซล)', 'error');
+                return;
+            }
+
+            // Clear previous QR Code
+            qrcodeContainer.innerHTML = '';
+            qrCanvas.style.display = 'none'; // Hide the helper canvas
+
+            // Create a temporary div for qrcode.js to render into
+            const tempQrDiv = document.createElement('div');
+            tempQrDiv.style.width = `${qrSize}px`;
+            tempQrDiv.style.height = `${qrSize}px`;
+            tempQrDiv.style.display = 'none';
+            document.body.appendChild(tempQrDiv);
+
+            // Initialize QRCode instance
+            qrCodeInstance = new QRCode(tempQrDiv, {
+                text: qrData,
+                width: qrSize,
+                height: qrSize,
+                colorDark: qrColor,
+                colorLight: bgColor,
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            setTimeout(() => {
+                const generatedCanvas = tempQrDiv.querySelector('canvas');
+                if (!generatedCanvas) {
+                    showMessage('ไม่สามารถสร้าง QR Code ได้', 'error');
+                    document.body.removeChild(tempQrDiv);
+                    return;
+                }
+
+                qrCanvas.width = qrSize;
+                qrCanvas.height = qrSize;
+                const ctx = qrCanvas.getContext('2d');
+
+                ctx.fillStyle = bgColor;
+                ctx.fillRect(0, 0, qrSize, qrSize);
+                ctx.drawImage(generatedCanvas, 0, 0, qrSize, qrSize);
+
+                if (logoImage) {
+                    const logoSize = qrSize * 0.25;
+                    const x = (qrSize - logoSize) / 2;
+                    const y = (qrSize - logoSize) / 2;
+                    ctx.drawImage(logoImage, x, y, logoSize, logoSize);
+                }
+
+                qrcodeContainer.innerHTML = '';
+                qrcodeContainer.appendChild(qrCanvas);
+                qrCanvas.style.display = 'block';
+
+                document.body.removeChild(tempQrDiv);
+                showMessage('สร้าง QR Code สำเร็จ!', 'success');
+            }, 100);
+        }
+
+        logoInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        logoImage = img;
+                        if (qrDataInput.value.trim()) {
+                            generateQRCode();
+                        }
+                    };
+                    img.onerror = () => {
+                        showMessage('ไม่สามารถโหลดรูปภาพโลโก้ได้', 'error');
+                        logoImage = null;
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                logoImage = null;
+                if (qrDataInput.value.trim()) {
+                    generateQRCode();
+                }
+            }
+        });
+
+        function downloadQRCode(format) {
+            if (!qrCanvas.getContext('2d') || qrCanvas.style.display === 'none') {
+                showMessage('กรุณาสร้าง QR Code ก่อนดาวน์โหลด', 'error');
+                return;
+            }
+
+            html2canvas(qrCanvas, {
+                backgroundColor: null,
+                useCORS: true
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `qrcode.${format}`;
+                if (format === 'png') {
+                    link.href = canvas.toDataURL('image/png');
+                } else if (format === 'jpg') {
+                    link.href = canvas.toDataURL('image/jpeg', 0.9);
+                }
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showMessage(`ดาวน์โหลด QR Code เป็น ${format.toUpperCase()} สำเร็จ!`, 'success');
+            }).catch(error => {
+                console.error('Error during html2canvas:', error);
+                showMessage('เกิดข้อผิดพลาดในการดาวน์โหลด', 'error');
+            });
+        }
+
+        async function suggestQrData() {
+            const topic = qrDataTopicInput.value.trim();
+            if (!topic) {
+                showMessage('กรุณาป้อนหัวข้อสำหรับแนะนำข้อมูล QR Code', 'error');
+                return;
+            }
+
+            suggestQrDataBtn.innerHTML = '<span class="spinner"></span> กำลังแนะนำ...';
+            suggestQrDataBtn.disabled = true;
+
+            try {
+                const prompt = `Generate a concise and relevant piece of data (either a URL or a short text phrase) suitable for a QR code, based on the following topic: ${topic}. Prioritize a URL if applicable. Do not include any introductory or concluding remarks, just the data.`;
+                let chatHistory = [];
+                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                const payload = { contents: chatHistory };
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const suggestedText = result.candidates[0].content.parts[0].text;
+                    qrDataInput.value = suggestedText.trim();
+                    showMessage('แนะนำข้อมูล QR Code สำเร็จ!', 'success');
+                    generateQRCode();
+                } else {
+                    showMessage('ไม่สามารถแนะนำข้อมูลได้ กรุณาลองอีกครั้ง', 'error');
+                    console.error('Gemini API response structure unexpected:', result);
+                }
+            } catch (error) {
+                showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อกับ Gemini API', 'error');
+                console.error('Error calling Gemini API:', error);
+            } finally {
+                suggestQrDataBtn.innerHTML = '✨ แนะนำข้อมูล QR Code';
+                suggestQrDataBtn.disabled = false;
+            }
+        }
+
+
+        // Event listeners
+        generateBtn.addEventListener('click', generateQRCode);
+        downloadPngBtn.addEventListener('click', () => downloadQRCode('png'));
+        downloadJpgBtn.addEventListener('click', () => downloadQRCode('jpg'));
+        suggestQrDataBtn.addEventListener('click', suggestQrData);
+
+        // Initial generation on load
+        window.onload = generateQRCode;
+
+    </script>
+</body>
+</html>
