@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,278 +7,399 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* Base styles for the body and overall layout */
         body {
             font-family: 'Inter', sans-serif;
-            /* Light brown-pink gradient background */
-            background: linear-gradient(135deg, #fdf4f5 0%, #fef0f1 100%);
+            /* Pastel pink gradient background for a minimal, warm aesthetic */
+            background: linear-gradient(135deg, #FCE4EC 0%, #F8BBD0 100%); /* Very light pink to slightly darker pink */
             display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-            overflow-y: auto; /* Allow body scrollbar */
-            overflow-x: hidden; /* Keep horizontal hidden */
+            justify-content: center; /* Center content horizontally */
+            align-items: center; /* Center content vertically */
+            min-height: 100vh; /* Full viewport height */
+            padding: 20px; /* Padding around the main container */
+            overflow-y: auto; /* Allow vertical scrolling if content overflows */
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+            color: #6B5E55; /* Lighter dark brown for all body text */
         }
+
+        /* Styles for the main container holding all elements */
         .container {
-            background-color: #ffffff;
-            border-radius: 24px; /* More rounded corners */
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15); /* Stronger, softer shadow */
-            padding: 35px;
-            width: 100%;
-            max-width: 950px; /* Slightly wider container to accommodate new layout */
+            background-color: #ffffff; /* White background for the card-like container */
+            border-radius: 24px; /* Highly rounded corners for a modern look */
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15); /* Soft, prominent shadow for depth */
+            padding: 35px; /* Internal padding */
+            width: 100%; /* Full width up to max-width */
+            max-width: 950px; /* Maximum width for the container on larger screens */
             display: flex;
-            flex-direction: column;
-            gap: 28px; /* Increased spacing */
-            animation: fadeIn 0.8s ease-out forwards;
+            flex-direction: column; /* Stack elements vertically */
+            gap: 28px; /* Space between major sections */
+            animation: fadeIn 0.8s ease-out forwards; /* Fade-in animation on load */
+            position: relative; /* Needed for absolute positioning of clear button */
         }
+
+        /* Keyframe animation for fading in the container */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* Heading style */
         h1 {
-            color: #4a4e69; /* Muted dark blue-gray for heading */
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+            color: #6B5E55; /* Lighter dark brown for heading */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05); /* Subtle text shadow */
         }
 
+        /* Grouping for input fields (label + input) */
         .input-group {
             display: flex;
             flex-direction: column;
-            gap: 10px; /* Increased gap */
+            gap: 10px; /* Space between label and input */
         }
+
+        /* Label styles */
         label {
             font-weight: 600;
-            color: #7a7c8e; /* Softer muted blue-gray label color */
+            color: #6B5E55; /* Lighter dark brown for labels */
             font-size: 0.95rem;
         }
+
+        /* Styles for all input types (text, number, color, file) */
         input[type="text"],
         input[type="number"],
         input[type="color"],
         input[type="file"] {
-            padding: 14px 18px; /* More padding */
-            border: 1px solid #e0e0e0; /* Lighter border */
-            border-radius: 12px; /* More rounded inputs */
+            padding: 14px 18px; /* Generous padding */
+            border: 1px solid #E0E0E0; /* Light border */
+            border-radius: 12px; /* Rounded input fields */
             font-size: 1rem;
-            color: #2d3748; /* Darker input text */
-            background-color: #fcfcfc; /* Light background for inputs */
-            transition: all 0.3s ease-in-out;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+            color: #6B5E55; /* Lighter dark brown for input text */
+            background-color: #FFF9F9; /* Very light pink background */
+            transition: all 0.3s ease-in-out; /* Smooth transitions for focus effects */
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05); /* Subtle inner shadow */
         }
+
+        /* Focus styles for input fields */
         input[type="text"]:focus,
         input[type="number"]:focus,
         input[type="color"]:focus,
         input[type="file"]:focus {
-            outline: none;
-            border-color: #d4a373; /* Soft, warm brown on focus */
-            box-shadow: 0 0 0 4px rgba(212, 163, 115, 0.3); /* Softer focus shadow */
-            background-color: #ffffff;
+            outline: none; /* Remove default outline */
+            border-color: #EC407A; /* Pink border on focus */
+            box-shadow: 0 0 0 4px rgba(236, 64, 122, 0.3); /* Softer, larger focus shadow */
+            background-color: #ffffff; /* White background on focus */
         }
+
+        /* Specific style for file input cursor */
         input[type="file"] {
             cursor: pointer;
         }
+
+        /* Specific style for color input height */
         input[type="color"] {
-            height: 48px; /* Consistent height */
-            padding: 5px; /* Adjust padding for color picker */
+            height: 48px; /* Maintain consistent height with other inputs */
+            padding: 5px; /* Adjust padding to fit color picker */
         }
 
-        /* Main content area for QR code, and settings/buttons */
+        /* Main content area: flex container for QR display panel and right panel */
         .main-content-area {
             display: flex;
-            flex-wrap: wrap; /* Allow wrapping on smaller screens */
-            gap: 25px;
-            justify-content: center; /* Center items when wrapped */
-            align-items: flex-start; /* Align items at the top */
+            flex-wrap: wrap; /* Allow items to wrap to next line on smaller screens */
+            gap: 25px; /* Space between QR panel and right panel */
+            justify-content: center; /* Center items horizontally when wrapped */
+            align-items: flex-start; /* Align items to the top */
         }
 
-        /* Left Panel: Only QR Code Display */
-        .qr-display-panel { /* Renamed from qr-and-buttons-panel */
-            flex: 1; /* Allow it to grow */
-            min-width: 300px; /* Ensure it doesn't get too small */
-            max-width: 380px; /* Control its max width */
-            display: flex; /* Use flex to center its content */
-            flex-direction: column; /* Stack QR and buttons (if they were here) */
+        /* Left Panel: Contains only the QR Code display */
+        .qr-display-panel {
+            flex: 1; /* Allows the panel to grow and shrink */
+            min-width: 300px; /* Minimum width before wrapping */
+            max-width: 380px; /* Maximum width for the panel */
+            display: flex;
+            flex-direction: column; /* Stack items vertically */
             align-items: center; /* Center QR code horizontally within this panel */
-            gap: 20px; /* Space between QR and buttons (if they were here) */
+            gap: 20px; /* Space within the panel (though only QR code is here) */
         }
 
-        /* QR Code Container - adjust max-width and height for smaller frame */
+        /* QR Code Container: The visual frame for the QR code */
         #qrcode-container {
-            width: 100%; /* Take full width of its parent */
-            max-width: 300px; /* Make it slightly smaller as requested */
-            height: 300px; /* Fixed height for a square frame */
+            width: 100%; /* Take full width of its parent (.qr-display-panel) */
+            max-width: 300px; /* Specific max-width for the QR code frame */
+            height: 300px; /* Fixed height to ensure a square frame */
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #f8fafc; /* White background for QR code display */
-            border: 2px dashed #c0c0c0; /* More prominent dashed border (medium gray) */
-            border-radius: 16px; /* More rounded */
-            padding: 10px; /* Smaller padding for QR frame */
-            overflow: hidden;
-            transition: all 0.3s ease-in-out;
-            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+            background-color: #f8fafc; /* Light background for the QR code area */
+            border: 2px dashed #C0C0C0; /* Dashed border for visual separation */
+            border-radius: 16px; /* Rounded corners for the frame */
+            padding: 10px; /* Internal padding for the QR code */
+            overflow: hidden; /* Hide any overflow */
+            transition: all 0.3s ease-in-out; /* Smooth transitions */
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05); /* Subtle inner shadow */
         }
+
+        /* Canvas element where the QR code is drawn */
         #qrcode-container canvas {
             max-width: 100%;
             height: auto;
-            border-radius: 12px; /* Rounded QR code canvas */
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Shadow for the QR code itself */
+            border-radius: 12px; /* Rounded corners for the QR code image itself */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Shadow for the QR code image */
         }
 
-        /* Right Panel: Settings and Buttons */
+        /* Right Panel: Contains settings and buttons */
         .right-panel {
-            flex: 2; /* Right panel takes more space */
+            flex: 2; /* Right panel takes more space than the left */
             display: flex;
-            flex-direction: column; /* Stack settings grid and button group */
-            gap: 25px; /* Space between settings grid and button group */
-            min-width: 300px; /* Minimum width for right panel */
+            flex-direction: column; /* Stack settings grid and button group vertically */
+            gap: 25px; /* Space between settings and buttons */
+            min-width: 300px; /* Minimum width for the right panel */
         }
 
-        /* Settings Grid (Colors, Size, Logo) */
+        /* Settings Grid: Grid layout for color, size, and logo inputs */
         .settings-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Adjust minmax for 4 items in a row */
-            gap: 20px; /* Gap between setting items */
-            align-items: flex-start;
+            /* Responsive grid: auto-fit items, min width 180px, max 1fr (equal space) */
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Increased min-width for row layout */
+            gap: 20px; /* Space between grid items */
+            align-items: flex-start; /* Align items to the top of their grid cells */
         }
-        .settings-grid .input-group,
-        .settings-grid .color-picker-item {
+
+        /* Ensure input groups within the settings grid stack correctly */
+        .settings-grid .input-group {
             display: flex;
             flex-direction: column;
             gap: 10px;
         }
 
-        /* Button Group - now horizontal, below settings */
+        /* Styles for color picker items - now in a row */
+        .settings-grid .color-picker-item {
+            display: flex;
+            flex-direction: row; /* Changed to row */
+            align-items: center; /* Vertically align items in the center */
+            justify-content: space-between; /* Push label to left, input to right */
+            min-width: 180px; /* Ensure it has enough space */
+        }
+        /* Adjust label width for color pickers to prevent overflow */
+        .settings-grid .color-picker-item label {
+            flex-shrink: 0; /* Prevent label from shrinking */
+            margin-right: 10px; /* Space between label and color input */
+            color: #6B5E55; /* Lighter dark brown for color picker labels */
+        }
+        .settings-grid .color-picker-item input[type="color"] {
+            flex-grow: 1; /* Allow color input to take remaining space */
+            max-width: 80px; /* Limit max width of color input */
+        }
+
+
+        /* Styles for the new size buttons container */
+        .size-buttons-group {
+            display: flex;
+            gap: 8px; /* Space between size buttons */
+            margin-top: 10px; /* Space from label above */
+        }
+        .size-buttons-group button {
+            flex: 1; /* Make buttons take equal space */
+            padding: 10px 15px; /* Adjust padding for size buttons */
+            font-size: 0.9rem; /* Smaller font size for size buttons */
+            border-radius: 8px; /* Slightly less rounded than main buttons */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08); /* Subtle shadow */
+            transition: all 0.2s ease-in-out;
+            color: #6B5E55; /* Lighter dark brown for size button text */
+        }
+        .size-buttons-group button.active-size {
+            background: linear-gradient(45deg, #EC407A, #E91E63); /* Active size button color (pink) */
+            color: #ffffff; /* White text for active button */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .size-buttons-group button:not(.active-size):hover {
+            background-color: #F8BBD0; /* Lighter pink hover for inactive */
+            transform: translateY(-1px);
+        }
+
+
+        /* Button Group: Horizontal layout for action buttons */
         .button-group {
             display: flex; /* Make buttons horizontal */
-            flex-direction: row; /* Explicitly row */
-            flex-wrap: wrap; /* Allow wrapping on very small screens */
+            flex-direction: row; /* Explicitly row direction */
+            flex-wrap: wrap; /* Allow buttons to wrap on very small screens */
             gap: 10px; /* Space between horizontal buttons */
             justify-content: center; /* Center buttons horizontally */
-            width: 100%; /* Take full width of its parent (.right-panel) */
+            width: 100%; /* Take full width of its parent */
             margin-top: 5px; /* Small margin from settings above */
         }
+
+        /* Individual button styles within the group */
         .button-group button {
-            flex: 1; /* Allow buttons to share space */
+            flex: 1; /* Allow buttons to share available space equally */
             min-width: 100px; /* Minimum width for each button before wrapping */
-            max-width: 150px; /* Max width for each button */
+            max-width: 150px; /* Maximum width for each button */
             padding: 12px 20px; /* Slightly less padding for horizontal buttons */
         }
 
+        /* General button styles */
         button {
-            padding: 14px 30px; /* More padding */
-            border-radius: 12px; /* More rounded buttons */
+            padding: 14px 30px; /* Generous padding */
+            border-radius: 12px; /* Rounded corners */
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease-in-out;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Stronger button shadow */
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
+            transition: all 0.3s ease-in-out; /* Smooth transitions for hover/active states */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Prominent shadow */
+            letter-spacing: 0.5px; /* Spaced out letters */
+            text-transform: uppercase; /* Uppercase text */
             font-size: 0.95rem;
         }
+
+        /* Primary button (e.g., Generate QR Code) */
         button.primary {
-            /* Soft rose/pink gradient */
-            background: linear-gradient(45deg, #e0a0a0, #d48c8c);
-            color: #ffffff;
-            border: none;
-        }
-        button.primary:hover {
-            /* Darker rose/pink gradient on hover */
-            background: linear-gradient(45deg, #d48c8c, #c07a7a);
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
-        button.secondary {
-            background-color: #f5f5f5; /* Very light gray */
-            color: #7a7c8e; /* Dark gray text */
-            border: 1px solid #e0e0e0;
-        }
-        button.secondary:hover {
-            background-color: #e9e9e9; /* Slightly darker gray on hover */
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
+            background: linear-gradient(45deg, #F06292, #EC407A); /* Soft pastel pink gradient */
+            color: #ffffff; /* White text */
+            border: none; /* No border */
         }
 
-        /* Custom Message Box Styles */
+        /* Primary button hover state */
+        button.primary:hover {
+            background: linear-gradient(45deg, #E91E63, #C2185B); /* Darker pink gradient on hover */
+            transform: translateY(-3px) scale(1.02); /* Lift and slightly enlarge */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Larger shadow on hover */
+        }
+
+        /* Secondary buttons (e.g., Download PNG/JPG) */
+        button.secondary {
+            background-color: #FCE4EC; /* Very light pastel pink */
+            color: #6B5E55; /* Lighter dark brown text */
+            border: 1px solid #F8BBD0; /* Light pink border */
+        }
+
+        /* Secondary button hover state */
+        button.secondary:hover {
+            background-color: #F8BBD0; /* Slightly darker pastel pink on hover */
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Disabled button state */
+        button:disabled {
+            opacity: 0.6; /* Reduced opacity */
+            cursor: not-allowed; /* Not-allowed cursor */
+            transform: none; /* Remove hover effects */
+            box-shadow: none; /* Remove shadow */
+        }
+
+        /* Custom Message Box for notifications */
         .message-box {
-            position: fixed;
-            top: 25px; /* Slightly lower */
-            left: 50%;
-            transform: translateX(-50%);
-            /* Muted light green for success */
-            background-color: #a8d8b9;
-            color: #333333; /* Darker text for contrast */
-            padding: 18px 25px; /* More padding */
-            border-radius: 12px; /* More rounded */
+            position: fixed; /* Fixed position relative to viewport */
+            top: 25px; /* Position from top */
+            left: 50%; /* Center horizontally */
+            transform: translateX(-50%); /* Adjust for horizontal centering */
+            background-color: #F8BBD0; /* Light pink for success */
+            color: #6B5E55; /* Lighter dark brown text for contrast */
+            padding: 18px 25px; /* Generous padding */
+            border-radius: 12px; /* Rounded corners */
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25); /* Stronger shadow */
-            z-index: 1000;
-            opacity: 0;
-            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+            z-index: 1000; /* Ensure it's on top of other content */
+            opacity: 0; /* Initially hidden */
+            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out; /* Smooth show/hide */
             font-weight: 500;
             min-width: 250px;
             text-align: center;
         }
+
+        /* Show state for message box */
         .message-box.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
+            opacity: 1; /* Fully visible */
+            transform: translateX(-50%) translateY(0); /* Slide in from slightly above */
         }
+
+        /* Error state for message box */
         .message-box.error {
-            /* Muted light red for error */
-            background-color: #f0a0a0;
-            color: #333333;
+            background-color: #FFAB91; /* Light reddish-pink for error */
+            color: #6B5E55; /* Lighter dark brown text */
         }
 
         /* Loading Spinner */
         .spinner {
             border: 4px solid rgba(255, 255, 255, 0.3); /* Lighter spinner border */
-            border-left-color: #e0a0a0; /* Matching primary button color */
-            border-radius: 50%;
-            width: 20px; /* Slightly smaller spinner */
+            border-left-color: #EC407A; /* Matching primary button color (pink) */
+            border-radius: 50%; /* Circular shape */
+            width: 20px; /* Size of the spinner */
             height: 20px;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-            vertical-align: middle;
-            margin-right: 8px;
+            animation: spin 1s linear infinite; /* Rotation animation */
+            display: inline-block; /* Inline display */
+            vertical-align: middle; /* Align with text */
+            margin-right: 8px; /* Space to the right of spinner */
         }
+
+        /* Keyframe animation for spinner rotation */
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
 
+        /* Clear settings button specific styles */
+        .clear-settings-button-wrapper {
+            position: absolute; /* Position absolutely within the container */
+            bottom: 20px; /* 20px from the bottom */
+            right: 20px; /* 20px from the right */
+            z-index: 10; /* Ensure it's above other elements */
+        }
+        .clear-settings-button {
+            width: 50px; /* Fixed width for a square/circle */
+            height: 50px; /* Fixed height for a square/circle */
+            border-radius: 50%; /* Make it perfectly round */
+            background-color: #FCE4EC; /* Light pastel pink */
+            color: #6B5E55; /* Lighter dark brown text */
+            border: 1px solid #F8BBD0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15); /* More prominent shadow */
+            display: flex; /* Use flex to center the SVG icon */
+            justify-content: center;
+            align-items: center;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
+        .clear-settings-button:hover {
+            background-color: #F8BBD0;
+            transform: translateY(-2px) scale(1.05); /* Lift and slightly enlarge on hover */
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+        .clear-settings-button svg {
+            width: 24px; /* Size of the SVG icon */
+            height: 24px;
+            stroke: currentColor; /* Use the button's text color for the SVG stroke */
+        }
+
+
+        /* Media Queries for Responsive Design (Mobile First) */
         @media (max-width: 768px) {
             body {
                 padding: 10px; /* Reduce body padding on smaller screens */
             }
             .container {
                 padding: 20px; /* Reduce container padding on mobile */
-                gap: 15px; /* Reduce gap on mobile */
+                gap: 15px; /* Reduce gap between sections on mobile */
                 max-width: 100%; /* Ensure container takes full width on mobile */
             }
             h1 {
-                font-size: 2rem;
+                font-size: 2rem; /* Adjust heading size for mobile */
             }
-            /* Stack main content area items on mobile */
+            /* Stack main content area items vertically on mobile */
             .main-content-area {
                 flex-direction: column;
                 gap: 20px;
             }
-            .qr-display-panel { /* Renamed from qr-and-buttons-panel */
-                max-width: 100%; /* Take full width */
-                min-width: unset;
+            /* QR display panel adjustments for mobile */
+            .qr-display-panel {
+                max-width: 100%; /* Take full width on mobile */
+                min-width: unset; /* Remove min-width constraint */
             }
+            /* QR code container adjustments for mobile */
             #qrcode-container {
                 max-width: 100%; /* Allow QR container to take full width on mobile */
                 height: 250px; /* Adjust fixed height for mobile */
                 min-width: unset;
             }
+            /* Button group adjustments for mobile (stack vertically) */
             .button-group {
                 flex-direction: column; /* Stack buttons vertically on mobile */
-                align-items: stretch; /* Stretch buttons */
+                align-items: stretch; /* Stretch buttons to full width */
                 gap: 12px;
             }
             .button-group button {
@@ -286,20 +407,24 @@
                 min-width: unset;
                 max-width: unset;
             }
+            /* Right panel adjustments for mobile */
             .right-panel {
                 flex: unset; /* Remove flex sizing on mobile */
                 width: 100%; /* Take full width */
                 min-width: unset;
                 gap: 20px; /* Adjust gap for mobile */
             }
+            /* Settings grid adjustments for mobile (stack vertically) */
             .settings-grid {
                 grid-template-columns: 1fr; /* Stack settings on mobile */
                 gap: 15px;
             }
+            /* Ensure input groups within settings grid stack correctly on mobile */
             .settings-grid .input-group,
             .settings-grid .color-picker-item {
                 min-width: unset;
             }
+            /* Input and button padding adjustments for mobile */
             button {
                 padding: 12px 20px; /* Slightly less padding for buttons */
             }
@@ -312,24 +437,50 @@
             input[type="color"] {
                 height: 44px; /* Adjust height for consistency */
             }
+            .size-buttons-group {
+                flex-direction: column; /* Stack size buttons on mobile */
+            }
+            .size-buttons-group button {
+                width: 100%; /* Full width for stacked size buttons */
+            }
+            .clear-settings-button-wrapper {
+                position: static; /* Remove absolute positioning on mobile */
+                width: 100%; /* Take full width */
+                display: flex;
+                justify-content: center; /* Center button horizontally */
+                margin-top: 20px; /* Add some margin from elements above */
+                margin-bottom: 0; /* Remove bottom margin if any */
+            }
+            .clear-settings-button {
+                width: auto; /* Allow button to size content */
+                padding: 10px 20px; /* Add padding for text */
+                border-radius: 12px; /* Make it a rounded rectangle */
+                font-size: 0.95rem; /* Readable font size */
+                height: auto; /* Auto height */
+            }
+            .clear-settings-button svg {
+                display: none; /* Hide SVG icon on mobile when text is shown */
+            }
+            .clear-settings-button::before {
+                content: "Clear Settings"; /* Show text on mobile */
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="text-3xl font-bold text-center mb-4">เครื่องสร้าง QR Code</h1>
+        <h1 class="text-3xl font-bold text-center mb-4">QR Code Generator</h1>
 
         <div id="messageBox" class="message-box"></div>
 
         <div class="input-group">
-            <label for="qrData">ข้อมูล QR Code (ข้อความหรือ URL):</label>
-            <input type="text" id="qrData" placeholder="เช่น https://www.example.com หรือ ข้อความของคุณ" value="https://www.google.com">
+            <label for="qrData">QR Code Data (Text or URL):</label>
+            <input type="text" id="qrData" placeholder="e.g., https://www.example.com or your text" value="https://www.google.com">
         </div>
 
         <div class="input-group">
-            <label for="qrDataTopic">หัวข้อสำหรับแนะนำข้อมูล QR Code:</label>
-            <input type="text" id="qrDataTopic" placeholder="เช่น โปรโมชั่นร้านกาแฟ, ข้อมูลติดต่อ">
-            <button id="suggestQrDataBtn" class="primary">✨ แนะนำข้อมูล QR Code</button>
+            <label for="imageTitleInput">Image Title (appears above QR Code):</label>
+            <input type="text" id="imageTitleInput" placeholder="e.g., Special Promotion, Contact Us">
         </div>
 
         <div class="main-content-area">
@@ -342,28 +493,39 @@
             <div class="right-panel">
                 <div class="settings-grid">
                     <div class="color-picker-item">
-                        <label for="qrColor">สี QR Code:</label>
+                        <label for="qrColor">QR Code Color:</label>
                         <input type="color" id="qrColor" value="#000000">
                     </div>
                     <div class="color-picker-item">
-                        <label for="bgColor">สีพื้นหลัง:</label>
+                        <label for="bgColor">Background Color:</label>
                         <input type="color" id="bgColor" value="#ffffff">
                     </div>
                     <div class="input-group">
-                        <label for="qrSize">ขนาดภาพ (พิกเซล):</label>
-                        <input type="number" id="qrSize" value="256" min="50" max="99999">
+                        <label>Image Size:</label>
+                        <div class="size-buttons-group">
+                            <button class="secondary" data-size="128">Small</button>
+                            <button class="secondary active-size" data-size="256">Medium</button>
+                            <button class="secondary" data-size="512">Large</button>
+                        </div>
                     </div>
                     <div class="input-group">
-                        <label for="logoInput">แทรกโลโก้ (PNG/JPG):</label>
+                        <label for="logoInput">Insert Logo (PNG/JPG):</label>
                         <input type="file" id="logoInput" accept="image/png, image/jpeg">
                     </div>
                 </div>
                 <div class="button-group">
-                    <button id="generateBtn" class="primary">สร้าง QR Code</button>
-                    <button id="downloadPngBtn" class="secondary">ดาวน์โหลด PNG</button>
-                    <button id="downloadJpgBtn" class="secondary">ดาวน์โหลด JPG</button>
+                    <button id="generateBtn" class="primary">Generate QR Code</button>
+                    <button id="downloadPngBtn" class="secondary">Download PNG</button>
+                    <button id="downloadJpgBtn" class="secondary">Download JPG</button>
                 </div>
             </div>
+        </div>
+        <div class="clear-settings-button-wrapper">
+            <button id="clearSettingsBtn" class="clear-settings-button">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                </svg>
+            </button>
         </div>
     </div>
 
@@ -371,13 +533,19 @@
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
     <script>
+        // Define size values
+        const sizeMap = {
+            'small': 128,
+            'medium': 256,
+            'large': 512
+        };
+
         // Get DOM elements
+        const appTitleElement = document.querySelector('h1');
         const qrDataInput = document.getElementById('qrData');
-        const qrDataTopicInput = document.getElementById('qrDataTopic');
-        const suggestQrDataBtn = document.getElementById('suggestQrDataBtn');
+        const imageTitleInput = document.getElementById('imageTitleInput');
         const qrColorInput = document.getElementById('qrColor');
         const bgColorInput = document.getElementById('bgColor');
-        const qrSizeInput = document.getElementById('qrSize');
         const logoInput = document.getElementById('logoInput');
         const generateBtn = document.getElementById('generateBtn');
         const downloadPngBtn = document.getElementById('downloadPngBtn');
@@ -385,16 +553,26 @@
         const qrcodeContainer = document.getElementById('qrcode-container');
         const qrCanvas = document.getElementById('qrCanvas');
         const messageBox = document.getElementById('messageBox');
+        const clearSettingsBtn = document.getElementById('clearSettingsBtn'); 
 
-        let qrCodeInstance = null; // To store the QRCode object
-        let logoImage = null; // To store the uploaded logo image
+        const sizeButtons = document.querySelectorAll('.size-buttons-group button');
+
+        let qrCodeInstance = null;
+        let logoImage = null;
+        let currentQrSize = sizeMap.medium; // Default size
 
         // Function to show a custom message box
-        function showMessage(message, type = 'success') {
-            messageBox.textContent = message;
-            messageBox.className = `message-box show ${type}`; // Add type class for styling
+        function showMessage(message, type = 'success', format = null) {
+            let messageText = message;
+
+            if (message === "QR Code downloaded as {format} successfully!") {
+                messageText = `QR Code downloaded as ${format.toUpperCase()} successfully!`;
+            }
+
+            messageBox.textContent = messageText;
+            messageBox.className = `message-box show ${type}`;
             setTimeout(() => {
-                messageBox.className = `message-box ${type}`; // Hide after a delay
+                messageBox.className = `message-box ${type}`;
             }, 3000);
         }
 
@@ -403,33 +581,38 @@
             const qrData = qrDataInput.value.trim();
             const qrColor = qrColorInput.value;
             const bgColor = bgColorInput.value;
-            const qrSize = parseInt(qrSizeInput.value);
+            const imageTitle = imageTitleInput.value.trim();
 
             if (!qrData) {
-                showMessage('กรุณาป้อนข้อมูลสำหรับ QR Code', 'error');
-                return;
-            }
-            if (isNaN(qrSize) || qrSize < 50 || qrSize > 99999) { // Updated max value
-                showMessage('ขนาดภาพไม่ถูกต้อง (50-99999 พิกเซล)', 'error');
+                showMessage("Please enter data for the QR Code.", 'error');
                 return;
             }
 
-            // Clear previous QR Code
+            let titleAreaHeight = 0;
+            let qrCodeYOffset = 0;
+            const titleFontSize = 24;
+            const titleMargin = 15;
+
+            if (imageTitle) {
+                titleAreaHeight = titleFontSize + titleMargin;
+                qrCodeYOffset = titleAreaHeight;
+            }
+
+            const totalCanvasHeight = currentQrSize + titleAreaHeight;
+
             qrcodeContainer.innerHTML = '';
-            qrCanvas.style.display = 'none'; // Hide the helper canvas
+            qrCanvas.style.display = 'none';
 
-            // Create a temporary div for qrcode.js to render into
             const tempQrDiv = document.createElement('div');
-            tempQrDiv.style.width = `${qrSize}px`;
-            tempQrDiv.style.height = `${qrSize}px`;
+            tempQrDiv.style.width = `${currentQrSize}px`;
+            tempQrDiv.style.height = `${currentQrSize}px`;
             tempQrDiv.style.display = 'none';
             document.body.appendChild(tempQrDiv);
 
-            // Initialize QRCode instance
             qrCodeInstance = new QRCode(tempQrDiv, {
                 text: qrData,
-                width: qrSize,
-                height: qrSize,
+                width: currentQrSize,
+                height: currentQrSize,
                 colorDark: qrColor,
                 colorLight: bgColor,
                 correctLevel: QRCode.CorrectLevel.H
@@ -438,24 +621,33 @@
             setTimeout(() => {
                 const generatedCanvas = tempQrDiv.querySelector('canvas');
                 if (!generatedCanvas) {
-                    showMessage('ไม่สามารถสร้าง QR Code ได้', 'error');
+                    showMessage("Could not generate QR Code.", 'error');
                     document.body.removeChild(tempQrDiv);
                     return;
                 }
 
-                qrCanvas.width = qrSize;
-                qrCanvas.height = qrSize;
+                qrCanvas.width = currentQrSize;
+                qrCanvas.height = totalCanvasHeight;
                 const ctx = qrCanvas.getContext('2d');
 
                 ctx.fillStyle = bgColor;
-                ctx.fillRect(0, 0, qrSize, qrSize);
-                ctx.drawImage(generatedCanvas, 0, 0, qrSize, qrSize);
+                ctx.fillRect(0, 0, currentQrSize, totalCanvasHeight);
+
+                if (imageTitle) {
+                    ctx.font = `${titleFontSize}px Inter, sans-serif`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillStyle = qrColor;
+                    ctx.fillText(imageTitle, currentQrSize / 2, titleAreaHeight / 2);
+                }
+
+                ctx.drawImage(generatedCanvas, 0, qrCodeYOffset, currentQrSize, currentQrSize);
 
                 if (logoImage) {
-                    const logoSize = qrSize * 0.25;
-                    const x = (qrSize - logoSize) / 2;
-                    const y = (qrSize - logoSize) / 2;
-                    ctx.drawImage(logoImage, x, y, logoSize, logoSize);
+                    const logoSize = currentQrSize * 0.25;
+                    const x = (currentQrSize - logoSize) / 2;
+                    const y = (currentQrSize - logoSize) / 2;
+                    ctx.drawImage(logoImage, x, y + qrCodeYOffset, logoSize, logoSize);
                 }
 
                 qrcodeContainer.innerHTML = '';
@@ -463,7 +655,7 @@
                 qrCanvas.style.display = 'block';
 
                 document.body.removeChild(tempQrDiv);
-                showMessage('สร้าง QR Code สำเร็จ!', 'success');
+                showMessage("QR Code generated successfully!", 'success');
             }, 100);
         }
 
@@ -480,7 +672,7 @@
                         }
                     };
                     img.onerror = () => {
-                        showMessage('ไม่สามารถโหลดรูปภาพโลโก้ได้', 'error');
+                        showMessage("Could not load logo image.", 'error');
                         logoImage = null;
                     };
                     img.src = e.target.result;
@@ -494,9 +686,15 @@
             }
         });
 
+        imageTitleInput.addEventListener('input', () => {
+            if (qrDataInput.value.trim()) {
+                generateQRCode();
+            }
+        });
+
         function downloadQRCode(format) {
             if (!qrCanvas.getContext('2d') || qrCanvas.style.display === 'none') {
-                showMessage('กรุณาสร้าง QR Code ก่อนดาวน์โหลด', 'error');
+                showMessage("Please generate QR Code before downloading.", 'error');
                 return;
             }
 
@@ -514,69 +712,62 @@
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-                showMessage(`ดาวน์โหลด QR Code เป็น ${format.toUpperCase()} สำเร็จ!`, 'success');
+                showMessage("QR Code downloaded as {format} successfully!", 'success', format);
             }).catch(error => {
                 console.error('Error during html2canvas:', error);
-                showMessage('เกิดข้อผิดพลาดในการดาวน์โหลด', 'error');
+                showMessage("Error during download.", 'error');
             });
         }
 
-        async function suggestQrData() {
-            const topic = qrDataTopicInput.value.trim();
-            if (!topic) {
-                showMessage('กรุณาป้อนหัวข้อสำหรับแนะนำข้อมูล QR Code', 'error');
-                return;
-            }
-
-            suggestQrDataBtn.innerHTML = '<span class="spinner"></span> กำลังแนะนำ...';
-            suggestQrDataBtn.disabled = true;
-
-            try {
-                const prompt = `Generate a concise and relevant piece of data (either a URL or a short text phrase) suitable for a QR code, based on the following topic: ${topic}. Prioritize a URL if applicable. Do not include any introductory or concluding remarks, just the data.`;
-                let chatHistory = [];
-                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-                const payload = { contents: chatHistory };
-                const apiKey = "";
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                const result = await response.json();
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const suggestedText = result.candidates[0].content.parts[0].text;
-                    qrDataInput.value = suggestedText.trim();
-                    showMessage('แนะนำข้อมูล QR Code สำเร็จ!', 'success');
+        // Event listeners for size buttons
+        sizeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                sizeButtons.forEach(btn => btn.classList.remove('active-size'));
+                // Add active class to the clicked button
+                button.classList.add('active-size');
+                // Update currentQrSize based on data-size attribute
+                currentQrSize = parseInt(button.dataset.size);
+                // Regenerate QR code with new size
+                if (qrDataInput.value.trim()) {
                     generateQRCode();
-                } else {
-                    showMessage('ไม่สามารถแนะนำข้อมูลได้ กรุณาลองอีกครั้ง', 'error');
-                    console.error('Gemini API response structure unexpected:', result);
                 }
-            } catch (error) {
-                showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อกับ Gemini API', 'error');
-                console.error('Error calling Gemini API:', error);
-            } finally {
-                suggestQrDataBtn.innerHTML = '✨ แนะนำข้อมูล QR Code';
-                suggestQrDataBtn.disabled = false;
+            });
+        });
+
+        // New: Event listener for Clear Settings button
+        clearSettingsBtn.addEventListener('click', () => {
+            // Reset all input fields to default values
+            qrDataInput.value = "https://www.google.com";
+            imageTitleInput.value = "";
+            qrColorInput.value = "#000000";
+            bgColorInput.value = "#ffffff";
+            logoInput.value = ""; // Clear selected file
+            logoImage = null; // Clear loaded logo image
+
+            // Reset size to medium and update active button
+            currentQrSize = sizeMap.medium;
+            sizeButtons.forEach(btn => btn.classList.remove('active-size'));
+            const defaultSizeButton = document.querySelector(`.size-buttons-group button[data-size="${sizeMap.medium}"]`);
+            if (defaultSizeButton) {
+                defaultSizeButton.classList.add('active-size');
             }
-        }
 
+            // Regenerate QR code with default settings
+            generateQRCode();
+            showMessage("Settings cleared to default values.", 'success');
+        });
 
-        // Event listeners
-        generateBtn.addEventListener('click', generateQRCode);
-        downloadPngBtn.addEventListener('click', () => downloadQRCode('png'));
-        downloadJpgBtn.addEventListener('click', () => downloadQRCode('jpg'));
-        suggestQrDataBtn.addEventListener('click', suggestQrData);
 
         // Initial generation on load
-        window.onload = generateQRCode;
-
+        window.onload = () => {
+            // Set default active size button
+            const defaultSizeButton = document.querySelector(`.size-buttons-group button[data-size="${sizeMap.medium}"]`);
+            if (defaultSizeButton) {
+                defaultSizeButton.classList.add('active-size');
+            }
+            generateQRCode();
+        };
     </script>
 </body>
 </html>
