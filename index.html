@@ -3,775 +3,556 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Generator</title>
+    <title>Create Your QR Code | Premium Generator</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* Base styles for the body and overall layout */
+        :root {
+            /* Premium Color System */
+            --primary: #EC4899;
+            --primary-soft: #FCE7F3;
+            --secondary: #8B5CF6;
+            --accent: #F472B6;
+            --text-main: #2B2B2B;
+            --text-soft: #6B7280;
+            --border-soft: #E5E7EB;
+            --bg-page: #FDF7FB;
+            --card-bg: #FFFFFF;
+            --input-bg: #F9FAFB;
+            --shadow-primary: rgba(236, 72, 153, 0.15);
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            /* Pastel pink gradient background for a minimal, warm aesthetic */
-            background: linear-gradient(135deg, #FCE4EC 0%, #F8BBD0 100%); /* Very light pink to slightly darker pink */
-            display: flex;
-            justify-content: center; /* Center content horizontally */
-            align-items: center; /* Center content vertically */
-            min-height: 100vh; /* Full viewport height */
-            padding: 20px; /* Padding around the main container */
-            overflow-y: auto; /* Allow vertical scrolling if content overflows */
-            overflow-x: hidden; /* Prevent horizontal scrolling on responsive layout */
-            color: #6B5E55; /* Lighter dark brown for all body text */
-        }
-
-        /* Styles for the main container holding all elements */
-        .container {
-            background-color: #ffffff; /* White background for the card-like container */
-            border-radius: 24px; /* Highly rounded corners for a modern look */
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15); /* Soft, prominent shadow for depth */
-            padding: 35px; /* Internal padding */
-            width: 100%; /* Responsive width */
-            max-width: 950px; /* Max width for the container on larger screens */
-            display: flex;
-            flex-direction: column; /* Stack elements vertically */
-            gap: 28px; /* Space between major sections */
-            animation: fadeIn 0.8s ease-out forwards; /* Fade-in animation on load */
-            position: relative; /* Needed for absolute positioning of clear button */
-        }
-
-        /* Keyframe animation for fading in the container */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Heading style */
-        h1 {
-            color: #6B5E55; /* Lighter dark brown for heading */
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.05); /* Subtle text shadow */
-        }
-
-        /* Grouping for input fields (label + input) */
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px; /* Space between label and input */
-        }
-
-        /* Label styles */
-        label {
-            font-weight: 600;
-            color: #6B5E55; /* Lighter dark brown for labels */
-            font-size: 0.95rem;
-        }
-
-        /* Styles for all input types (text, number, color, file) */
-        input[type="text"],
-        input[type="number"],
-        input[type="color"],
-        input[type="file"] {
-            padding: 14px 18px; /* Generous padding */
-            border: 1px solid #E0E0E0; /* Light border */
-            border-radius: 12px; /* Rounded input fields */
-            font-size: 1rem;
-            color: #6B5E55; /* Lighter dark brown for input text */
-            background-color: #FFF9F9; /* Very light pink background */
-            transition: all 0.3s ease-in-out; /* Smooth transitions for focus effects */
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05); /* Subtle inner shadow */
-        }
-
-        /* Focus styles for input fields */
-        input[type="text"]:focus,
-        input[type="number"]:focus,
-        input[type="color"]:focus,
-        input[type="file"]:focus {
-            outline: none; /* Remove default outline */
-            border-color: #EC407A; /* Pink border on focus */
-            box-shadow: 0 0 0 4px rgba(236, 64, 122, 0.3); /* Softer, larger focus shadow */
-            background-color: #ffffff; /* White background on focus */
-        }
-
-        /* Specific style for file input cursor */
-        input[type="file"] {
-            cursor: pointer;
-        }
-
-        /* Specific style for color input height */
-        input[type="color"] {
-            height: 48px; /* Maintain consistent height with other inputs */
-            padding: 5px; /* Adjust padding to fit color picker */
-        }
-
-        /* Main content area: flex container for QR display panel and right panel */
-        .main-content-area {
-            display: flex;
-            flex-wrap: wrap; /* Allow items to wrap to next line on smaller screens */
-            gap: 25px; /* Space between QR panel and right panel */
-            justify-content: center; /* Center items horizontally when wrapped */
-            align-items: flex-start; /* Align items to the top */
-        }
-
-        /* Left Panel: Contains only the QR Code display */
-        .qr-display-panel {
-            flex: 1; /* Allows the panel to grow and shrink */
-            min-width: 300px; /* Minimum width before wrapping */
-            max-width: 380px; /* Maximum width for the panel */
-            display: flex;
-            flex-direction: column; /* Stack items vertically */
-            align-items: center; /* Center QR code horizontally within this panel */
-            gap: 20px; /* Space within the panel (though only QR code is here) */
-        }
-
-        /* QR Code Container: The visual frame for the QR code */
-        #qrcode-container {
-            width: 100%; /* Take full width of its parent (.qr-display-panel) */
-            max-width: 300px; /* Specific max-width for the QR code frame */
-            height: 300px; /* Fixed height to ensure a square frame */
+            background-color: var(--bg-page);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #f8fafc; /* Light background for the QR code area */
-            border: 2px dashed #C0C0C0; /* Dashed border for visual separation */
-            border-radius: 16px; /* Rounded corners for the frame */
-            padding: 10px; /* Internal padding for the QR code */
-            overflow: hidden; /* Hide any overflow */
-            transition: all 0.3s ease-in-out; /* Smooth transitions */
-            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05); /* Subtle inner shadow */
+            padding: 20px;
+            color: var(--text-main);
+            margin: 0;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        /* Canvas element where the QR code is drawn */
-        #qrcode-container canvas {
+        /* Ambient Layers in Background */
+        .ambient-blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -1;
+            opacity: 0.5;
+            animation: float 20s infinite alternate;
+        }
+        @keyframes float {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(100px, 50px); }
+        }
+
+        /* Main Card with Premium Depth */
+        .main-card {
+            background: var(--card-bg);
+            border-radius: 32px;
+            box-shadow: 
+                0 25px 50px -12px var(--shadow-primary),
+                0 4px 12px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 1000px;
+            padding: 48px;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .title-gradient {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        /* QR Preview Section - Fixed container size to prevent overflow */
+        .preview-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 440px;
+            max-height: 440px;
+            position: relative;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            box-shadow: inset 0 0 0 2px var(--bg-page);
+            overflow: hidden;
+        }
+        .preview-card::after {
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            z-index: -1;
+            border-radius: 24px;
+            opacity: 0.2;
+        }
+
+        #qrCanvas {
             max-width: 100%;
-            height: auto;
-            border-radius: 12px; /* Rounded corners for the QR code image itself */
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Shadow for the QR code image */
+            max-height: 100%;
+            height: auto !important;
+            width: auto !important;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            object-fit: contain;
+            animation: fadeIn 0.3s ease-out;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+
+        /* Form Controls */
+        .input-group label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-soft);
+            margin-bottom: 8px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
-        /* Right Panel: Contains settings and buttons */
-        .right-panel {
-            flex: 2; /* Right panel takes more space than the left */
+        .input-field {
+            background: var(--input-bg);
+            border: 2px solid var(--border-soft);
+            border-radius: 16px;
+            padding: 14px 20px;
+            width: 100%;
+            transition: all 0.25s ease;
+            color: var(--text-main);
+            outline: none;
+        }
+        .input-field:focus {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.1);
+        }
+
+        /* Action Button */
+        .btn-download {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 18px;
+            padding: 16px;
+            font-weight: 700;
+            width: 100%;
             display: flex;
-            flex-direction: column; /* Stack settings grid and button group vertically */
-            gap: 25px; /* Space between settings and buttons */
-            min-width: 300px; /* Minimum width for the right panel */
-        }
-
-        /* Settings Grid: Grid layout for color, size, and logo inputs */
-        .settings-grid {
-            display: grid;
-            /* Responsive grid: auto-fit items, min width 180px, max 1fr (equal space) */
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Increased min-width for row layout */
-            gap: 20px; /* Space between grid items */
-            align-items: flex-start; /* Align items to the top of their grid cells */
-        }
-
-        /* Ensure input groups within the settings grid stack correctly */
-        .settings-grid .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        /* Styles for color picker items - now in a row */
-        .settings-grid .color-picker-item {
-            display: flex;
-            flex-direction: row; /* Changed to row */
-            align-items: center; /* Vertically align items in the center */
-            justify-content: space-between; /* Push label to left, input to right */
-            min-width: 180px; /* Ensure it has enough space */
-        }
-        /* Adjust label width for color pickers to prevent overflow */
-        .settings-grid .color-picker-item label {
-            flex-shrink: 0; /* Prevent label from shrinking */
-            margin-right: 10px; /* Space between label and color input */
-            color: #6B5E55; /* Lighter dark brown for color picker labels */
-        }
-        .settings-grid .color-picker-item input[type="color"] {
-            flex-grow: 1; /* Allow color input to take remaining space */
-            max-width: 80px; /* Limit max width of color input */
-        }
-
-
-        /* Styles for the new size buttons container */
-        .size-buttons-group {
-            display: flex;
-            gap: 8px; /* Space between size buttons */
-            margin-top: 10px; /* Space from label above */
-        }
-        .size-buttons-group button {
-            flex: 1; /* Make buttons take equal space */
-            padding: 10px 15px; /* Adjust padding for size buttons */
-            font-size: 0.9rem; /* Smaller font size for size buttons */
-            border-radius: 8px; /* Slightly less rounded than main buttons */
-            box-shadow: 0 2px 5px rgba(0,0,0,0.08); /* Subtle shadow */
-            transition: all 0.2s ease-in-out;
-            color: #6B5E55; /* Lighter dark brown for size button text */
-        }
-        .size-buttons-group button.active-size {
-            background: linear-gradient(45deg, #EC407A, #E91E63); /* Active size button color (pink) */
-            color: #ffffff; /* White text for active button */
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-        .size-buttons-group button:not(.active-size):hover {
-            background-color: #F8BBD0; /* Lighter pink hover for inactive */
-            transform: translateY(-1px);
-        }
-
-
-        /* Button Group: Horizontal layout for action buttons */
-        .button-group {
-            display: flex; /* Make buttons horizontal */
-            flex-direction: row; /* Explicitly row direction */
-            flex-wrap: wrap; /* Allow buttons to wrap on very small screens */
-            gap: 10px; /* Space between horizontal buttons */
-            justify-content: center; /* Center buttons horizontally */
-            width: 100%; /* Take full width of its parent */
-            margin-top: 5px; /* Small margin from settings above */
-        }
-
-        /* Individual button styles within the group */
-        .button-group button {
-            flex: 1; /* Allow buttons to share available space equally */
-            min-width: 100px; /* Minimum width for each button before wrapping */
-            max-width: 150px; /* Maximum width for each button */
-            padding: 12px 20px; /* Slightly less padding for horizontal buttons */
-        }
-
-        /* General button styles */
-        button {
-            padding: 14px 30px; /* Generous padding */
-            border-radius: 12px; /* Rounded corners */
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease-in-out; /* Smooth transitions for hover/active states */
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Prominent shadow */
-            letter-spacing: 0.5px; /* Spaced out letters */
-            text-transform: uppercase; /* Uppercase text */
-            font-size: 0.95rem;
-        }
-
-        /* Primary button (e.g., Generate QR Code) */
-        button.primary {
-            background: linear-gradient(45deg, #F06292, #EC407A); /* Soft pastel pink gradient */
-            color: #ffffff; /* White text */
-            border: none; /* No border */
-        }
-
-        /* Primary button hover state */
-        button.primary:hover {
-            background: linear-gradient(45deg, #E91E63, #C2185B); /* Darker pink gradient on hover */
-            transform: translateY(-3px) scale(1.02); /* Lift and slightly enlarge */
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Larger shadow on hover */
-        }
-
-        /* Secondary buttons (e.g., Download PNG/JPG) */
-        button.secondary {
-            background-color: #FCE4EC; /* Very light pastel pink */
-            color: #6B5E55; /* Lighter dark brown text */
-            border: 1px solid #F8BBD0; /* Light pink border */
-        }
-
-        /* Secondary button hover state */
-        button.secondary:hover {
-            background-color: #F8BBD0; /* Slightly darker pastel pink on hover */
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Disabled button state */
-        button:disabled {
-            opacity: 0.6; /* Reduced opacity */
-            cursor: not-allowed; /* Not-allowed cursor */
-            transform: none; /* Remove hover effects */
-            box-shadow: none; /* Remove shadow */
-        }
-
-        /* Custom Message Box for notifications */
-        .message-box {
-            position: fixed; /* Fixed position relative to viewport */
-            top: 25px; /* Position from top */
-            left: 50%; /* Center horizontally */
-            transform: translateX(-50%); /* Adjust for horizontal centering */
-            background-color: #F8BBD0; /* Light pink for success */
-            color: #6B5E55; /* Lighter dark brown text for contrast */
-            padding: 18px 25px; /* Generous padding */
-            border-radius: 12px; /* Rounded corners */
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25); /* Stronger shadow */
-            z-index: 1000; /* Ensure it's on top of other content */
-            opacity: 0; /* Initially hidden */
-            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out; /* Smooth show/hide */
-            font-weight: 500;
-            min-width: 250px;
-            text-align: center;
-        }
-
-        /* Show state for message box */
-        .message-box.show {
-            opacity: 1; /* Fully visible */
-            transform: translateX(-50%) translateY(0); /* Slide in from slightly above */
-        }
-
-        /* Error state for message box */
-        .message-box.error {
-            background-color: #FFAB91; /* Light reddish-pink for error */
-            color: #6B5E55; /* Lighter dark brown text */
-        }
-
-        /* Loading Spinner */
-        .spinner {
-            border: 4px solid rgba(255, 255, 255, 0.3); /* Lighter spinner border */
-            border-left-color: #EC407A; /* Matching primary button color (pink) */
-            border-radius: 50%; /* Circular shape */
-            width: 20px; /* Size of the spinner */
-            height: 20px;
-            animation: spin 1s linear infinite; /* Rotation animation */
-            display: inline-block; /* Inline display */
-            vertical-align: middle; /* Align with text */
-            margin-right: 8px; /* Space to the right of spinner */
-        }
-
-        /* Keyframe animation for spinner rotation */
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Clear settings button specific styles */
-        .clear-settings-button-wrapper {
-            position: absolute; /* Position absolutely within the container */
-            bottom: 20px; /* 20px from the bottom */
-            right: 20px; /* 20px from the right */
-            z-index: 10; /* Ensure it's above other elements */
-        }
-        .clear-settings-button {
-            width: 50px; /* Fixed width for a square/circle */
-            height: 50px; /* Fixed height for a square/circle */
-            border-radius: 50%; /* Make it perfectly round */
-            background-color: #FCE4EC; /* Light pastel pink */
-            color: #6B5E55; /* Lighter dark brown text */
-            border: 1px solid #F8BBD0;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15); /* More prominent shadow */
-            display: flex; /* Use flex to center the SVG icon */
-            justify-content: center;
             align-items: center;
-            transition: all 0.2s ease-in-out;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 12px 30px rgba(236, 72, 153, 0.35);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
+            border: none;
         }
-        .clear-settings-button:hover {
-            background-color: #F8BBD0;
-            transform: translateY(-2px) scale(1.05); /* Lift and slightly enlarge on hover */
-            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-        }
-        .clear-settings-button svg {
-            width: 24px; /* Size of the SVG icon */
-            height: 24px;
-            fill: currentColor; /* Use fill for the new icon */
+        .btn-download:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.05);
+            box-shadow: 0 16px 40px rgba(236, 72, 153, 0.45);
         }
 
-        /* Media Queries for Responsive Design (Mobile First) */
+        /* Size Tabs Visibility Fix */
+        .size-group {
+            background: #F3F4F6;
+            padding: 4px;
+            border-radius: 18px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 4px;
+        }
+        .sz-btn {
+            padding: 12px 4px;
+            border-radius: 14px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #4B5563;
+            transition: all 0.2s ease;
+            text-align: center;
+            background: transparent;
+        }
+        .sz-btn:hover { color: var(--text-main); background: rgba(255, 255, 255, 0.5); }
+        .sz-btn.active { background: white; color: var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.06); }
+
+        .color-badge {
+            background: var(--input-bg);
+            border: 1px solid var(--border-soft);
+            padding: 4px 8px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Toggle Switch Custom */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background-color: #D1D5DB;
+            transition: .3s;
+            border-radius: 34px;
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px; width: 18px;
+            left: 3px; bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        input:checked + .toggle-slider { background: linear-gradient(135deg, var(--primary), var(--secondary)); }
+        input:checked + .toggle-slider:before { transform: translateX(20px); }
+
+        .clear-btn {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            width: 48px;
+            height: 48px;
+            background: white;
+            border: 1px solid var(--border-soft);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-soft);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .clear-btn:hover { transform: rotate(180deg); color: var(--primary); border-color: var(--primary-soft); }
+
         @media (max-width: 768px) {
-            body {
-                padding: 10px; /* Reduce body padding on smaller screens */
-            }
-            .container {
-                padding: 20px; /* Reduce container padding on mobile */
-                gap: 15px; /* Reduce gap between sections on mobile */
-                max-width: 100%; /* Ensure container takes full width on mobile */
-                width: 100%; /* Ensure width is responsive on mobile */
-            }
-            h1 {
-                font-size: 2rem; /* Adjust heading size for mobile */
-            }
-            /* Stack main content area items vertically on mobile */
-            .main-content-area {
-                flex-direction: column;
-                gap: 20px;
-            }
-            /* QR display panel adjustments for mobile */
-            .qr-display-panel {
-                max-width: 100%; /* Take full width on mobile */
-                min-width: unset; /* Remove min-width constraint */
-            }
-            /* QR code container adjustments for mobile */
-            #qrcode-container {
-                max-width: 100%; /* Allow QR container to take full width on mobile */
-                height: 250px; /* Adjust fixed height for mobile */
-                min-width: unset;
-            }
-            /* Button group adjustments for mobile (stack vertically) */
-            .button-group {
-                flex-direction: column; /* Stack buttons vertically on mobile */
-                align-items: stretch; /* Stretch buttons to full width */
-                gap: 12px;
-            }
-            .button-group button {
-                width: 100%; /* Full width for stacked buttons */
-                min-width: unset;
-                max-width: unset;
-            }
-            /* Right panel adjustments for mobile */
-            .right-panel {
-                flex: unset; /* Remove flex sizing on mobile */
-                width: 100%; /* Take full width */
-                min-width: unset;
-                gap: 20px; /* Adjust gap for mobile */
-            }
-            /* Settings grid adjustments for mobile (stack vertically) */
-            .settings-grid {
-                grid-template-columns: 1fr; /* Stack settings on mobile */
-                gap: 15px;
-            }
-            /* Ensure input groups within settings grid stack correctly on mobile */
-            .settings-grid .input-group,
-            .settings-grid .color-picker-item {
-                min-width: unset;
-            }
-            /* Input and button padding adjustments for mobile */
-            button {
-                padding: 12px 20px; /* Slightly less padding for buttons */
-            }
-            input[type="text"],
-            input[type="number"],
-            input[type="color"],
-            input[type="file"] {
-                padding: 12px 15px; /* Slightly less padding for inputs */
-            }
-            input[type="color"] {
-                height: 44px; /* Adjust height for consistency */
-            }
-            .size-buttons-group {
-                flex-direction: column; /* Stack size buttons on mobile */
-            }
-            .size-buttons-group button {
-                width: 100%; /* Full width for stacked size buttons */
-            }
-            /* Clear settings button on mobile */
-            .clear-settings-button-wrapper {
-                position: static; /* Remove absolute positioning on mobile */
-                width: 100%; /* Take full width */
-                display: flex;
-                justify-content: center; /* Center button horizontally */
-                margin-top: 20px; /* Add some margin from elements above */
-                margin-bottom: 0; /* Remove bottom margin if any */
-            }
-            .clear-settings-button {
-                width: auto; /* Allow button to size content */
-                padding: 10px 20px; /* Add padding for text */
-                border-radius: 12px; /* Make it a rounded rectangle */
-                font-size: 0.95rem; /* Readable font size */
-                height: auto; /* Auto height */
-            }
-            .clear-settings-button svg {
-                display: none; /* Hide SVG icon on mobile when text is shown */
-            }
-            .clear-settings-button::before {
-                content: "Clear Settings"; /* Show text on mobile */
-            }
+            .main-card { padding: 32px 24px; border-radius: 0; }
+            .preview-card { min-height: 320px; max-height: 320px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1 class="text-3xl font-bold text-center mb-4">QR Code Generator</h1>
 
-        <div id="messageBox" class="message-box"></div>
+    <!-- Ambient Decor Layers -->
+    <div class="ambient-blob w-[500px] h-[500px] bg-pink-100 top-[-150px] left-[-150px]"></div>
+    <div class="ambient-blob w-[400px] h-[400px] bg-indigo-100 bottom-[-100px] right-[-100px]"></div>
 
-        <div class="input-group">
-            <label for="qrData">QR Code Data (Text or URL):</label>
-            <input type="text" id="qrData" placeholder="e.g., https://www.example.com or your text" value="https://www.google.com">
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed top-6 left-1/2 -translate-x-1/2 bg-white px-8 py-4 rounded-2xl shadow-2xl z-[2000] flex items-center gap-3 font-bold transition-all -translate-y-24 border border-pink-100">
+        <span class="text-pink-500">✨</span>
+        <span id="toastText"></span>
+    </div>
+
+    <div class="main-card">
+        <!-- Header - Simple and Clean -->
+        <div class="mb-12 text-center md:text-left">
+            <h1 class="text-4xl title-gradient">Create Your QR</h1>
         </div>
 
-        <div class="input-group">
-            <label for="imageTitleInput">Image Title (appears above QR Code):</label>
-            <input type="text" id="imageTitleInput" placeholder="e.g., Special Promotion, Contact Us">
-        </div>
-
-        <div class="main-content-area">
-            <div class="qr-display-panel">
-                <div id="qrcode-container">
-                    <canvas id="qrCanvas" style="display: none;"></canvas>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+            
+            <!-- Left Side: Product Preview -->
+            <div class="flex flex-col gap-8 order-2 md:order-1">
+                <div>
+                    <span class="section-title">
+                        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24" class="inline mr-1"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                        Product Preview
+                    </span>
+                    <div class="preview-card" id="qr-container">
+                        <div id="loading" class="hidden absolute inset-0 bg-white/40 backdrop-blur-sm z-20 flex flex-col items-center justify-center">
+                            <div class="w-8 h-8 border-4 border-pink-100 border-t-pink-500 rounded-full animate-spin"></div>
+                        </div>
+                        <canvas id="qrCanvas" style="display: none;"></canvas>
+                        <div id="empty" class="text-center opacity-10">
+                            <svg class="mx-auto mb-4" width="80" height="80" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h7v7H4V4zm2 2v3h3V6H6zm2 2H7V7h1V6H6v1h1v1h1V7h1v1H8zM4 13h7v7H4v-7zm2 2v3h3v-3H6zm1 1h1v1H7v-1zm7-12h7v7h-7V4zm2 2v3h3V6h-3zm1 4h1V9h-1v1zm3 3h3v2h-3v-2zm-3 3h3v2h-3v-2zm3-3h-3v2h3v-2zm-3 3h-3v2h3v-2zm3-3h3v2h-3v-2zm-3 3h3v2h-3v-2z"/></svg>
+                            <p class="text-xs font-bold uppercase tracking-widest">Generating Preview...</p>
+                        </div>
+                    </div>
                 </div>
+
+                <button id="downloadBtn" class="btn-download">
+                    <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    Download
+                </button>
             </div>
 
-            <div class="right-panel">
-                <div class="settings-grid">
-                    <div class="color-picker-item">
-                        <label for="qrColor">QR Code Color:</label>
-                        <input type="color" id="qrColor" value="#000000">
+            <!-- Right Side: Configuration -->
+            <div class="flex flex-col gap-10 order-1 md:order-2">
+                
+                <div class="input-group">
+                    <label class="flex items-center gap-2 !text-pink-500">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                        QR Content
+                    </label>
+                    <input type="text" id="qrData" class="input-field font-semibold" placeholder="URL or Text..." value="https://www.google.com">
+                </div>
+
+                <div class="input-group">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="!mb-0">Caption Text</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="toggleCap" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
                     </div>
-                    <div class="color-picker-item">
-                        <label for="bgColor">Background Color:</label>
-                        <input type="color" id="bgColor" value="#ffffff">
-                    </div>
+                    <input type="text" id="capInput" class="input-field" placeholder="Tagline appearing on image...">
+                </div>
+
+                <div class="grid grid-cols-2 gap-6">
                     <div class="input-group">
-                        <label>Image Size:</label>
-                        <div class="size-buttons-group">
-                            <button class="secondary" data-size="128">Small</button>
-                            <button class="secondary active-size" data-size="256">Medium</button>
-                            <button class="secondary" data-size="512">Large</button>
+                        <label>Foreground</label>
+                        <div class="color-badge">
+                            <input type="color" id="qrColor" value="#000000" class="w-8 h-8 cursor-pointer rounded-lg border-none bg-none">
+                            <span id="fgHex" class="font-mono text-[10px] font-bold opacity-60">#000000</span>
                         </div>
                     </div>
                     <div class="input-group">
-                        <label for="logoInput">Insert Logo (PNG/JPG):</label>
-                        <input type="file" id="logoInput" accept="image/png, image/jpeg">
+                        <label>Canvas</label>
+                        <div class="color-badge">
+                            <input type="color" id="bgColor" value="#ffffff" class="w-8 h-8 cursor-pointer rounded-lg border-none bg-none">
+                            <span id="bgHex" class="font-mono text-[10px] font-bold opacity-60">#FFFFFF</span>
+                        </div>
                     </div>
                 </div>
-                <div class="button-group">
-                    <button id="generateBtn" class="primary">Generate QR Code</button>
-                    <button id="downloadPngBtn" class="secondary">Download PNG</button>
-                    <button id="downloadJpgBtn" class="secondary">Download JPG</button>
+
+                <div class="input-group">
+                    <label>Image Dimensions</label>
+                    <div class="size-group">
+                        <button class="sz-btn" data-sz="128">Small<br>128px</button>
+                        <button class="sz-btn active" data-sz="256">Medium<br>256px</button>
+                        <button class="sz-btn" data-sz="512">Large<br>512px</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Brand Logo</label>
+                    <div class="relative group">
+                        <input type="file" id="logoInp" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer z-10">
+                        <div class="flex items-center gap-4 bg-gray-50 p-4 rounded-2xl border-2 border-dashed border-gray-200 transition-all group-hover:border-pink-400 group-hover:bg-pink-50/30">
+                            <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm overflow-hidden border-2 border-white" id="logoPreview">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            </div>
+                            <div class="flex flex-col">
+                                <span id="fileName" class="text-sm font-bold">Add Logo</span>
+                                <span class="text-[9px] opacity-40 uppercase font-bold tracking-wider">Masked Circle</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="clear-settings-button-wrapper">
-            <button id="clearSettingsBtn" class="clear-settings-button">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
-                </svg>
-            </button>
-        </div>
+
+        <!-- Float Refresh -->
+        <button id="clearBtn" class="clear-btn" title="Reset fields">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+        </button>
     </div>
 
     <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
     <script>
-        // Define size values for S, M, L QR Code image
-        const qrImageSizeMap = {
-            'small': 128,
-            'medium': 256,
-            'large': 512
+        const dom = {
+            data: document.getElementById('qrData'),
+            cap: document.getElementById('capInput'),
+            qrCol: document.getElementById('qrColor'),
+            bgCol: document.getElementById('bgColor'),
+            logo: document.getElementById('logoInp'),
+            canvas: document.getElementById('qrCanvas'),
+            toast: document.getElementById('toast'),
+            toastMsg: document.getElementById('toastText'),
+            logoBox: document.getElementById('logoPreview'),
+            showCap: document.getElementById('toggleCap'),
+            load: document.getElementById('loading'),
+            download: document.getElementById('downloadBtn'),
+            fgHex: document.getElementById('fgHex'),
+            bgHex: document.getElementById('bgHex'),
+            reset: document.getElementById('clearBtn')
         };
 
-        // Get DOM elements
-        const appTitleElement = document.querySelector('h1');
-        const qrDataInput = document.getElementById('qrData');
-        const imageTitleInput = document.getElementById('imageTitleInput');
-        const qrColorInput = document.getElementById('qrColor');
-        const bgColorInput = document.getElementById('bgColor');
-        const logoInput = document.getElementById('logoInput');
-        const generateBtn = document.getElementById('generateBtn');
-        const downloadPngBtn = document.getElementById('downloadPngBtn');
-        const downloadJpgBtn = document.getElementById('downloadJpgBtn');
-        const qrcodeContainer = document.getElementById('qrcode-container');
-        const qrCanvas = document.getElementById('qrCanvas');
-        const messageBox = document.getElementById('messageBox');
-        const clearSettingsBtn = document.getElementById('clearSettingsBtn'); 
+        let logoImg = null;
+        let currentSize = 256;
+        let genDebounce = null;
 
-        const sizeButtons = document.querySelectorAll('.size-buttons-group button');
-
-        let qrCodeInstance = null;
-        let logoImage = null;
-        let currentQrImageSize = qrImageSizeMap.medium; // Default QR image size
-
-        // Function to show a custom message box
-        function showMessage(message, type = 'success', format = null) {
-            let messageText = message;
-
-            if (message === "QR Code downloaded as {format} successfully!") {
-                messageText = `QR Code downloaded as ${format.toUpperCase()} successfully!`;
-            }
-
-            messageBox.textContent = messageText;
-            messageBox.className = `message-box show ${type}`;
-            setTimeout(() => {
-                messageBox.className = `message-box ${type}`;
-            }, 3000);
+        function showToast(msg) {
+            dom.toastMsg.innerText = msg;
+            dom.toast.classList.add('!-translate-y-0');
+            setTimeout(() => dom.toast.classList.remove('!-translate-y-0'), 3000);
         }
 
-        // Function to generate QR Code
-        function generateQRCode() {
-            const qrData = qrDataInput.value.trim();
-            const qrColor = qrColorInput.value;
-            const bgColor = bgColorInput.value;
-            const imageTitle = imageTitleInput.value.trim();
-
-            if (!qrData) {
-                showMessage("Please enter data for the QR Code.", 'error');
-                return;
+        // Smart text wrapping for Canvas
+        function getLines(ctx, text, maxWidth) {
+            const chars = text.split('');
+            let lines = [];
+            let current = '';
+            for (let char of chars) {
+                let test = current + char;
+                if (ctx.measureText(test).width > maxWidth && current.length > 0) {
+                    lines.push(current);
+                    current = char;
+                } else {
+                    current = test;
+                }
             }
-
-            let titleAreaHeight = 0;
-            let qrCodeYOffset = 0;
-            const titleFontSize = 24;
-            const titleMargin = 15;
-
-            if (imageTitle) {
-                titleAreaHeight = titleFontSize + titleMargin;
-                qrCodeYOffset = titleAreaHeight;
-            }
-
-            const totalCanvasHeight = currentQrImageSize + titleAreaHeight; // Use currentQrImageSize
-
-            qrcodeContainer.innerHTML = '';
-            qrCanvas.style.display = 'none';
-
-            const tempQrDiv = document.createElement('div');
-            tempQrDiv.style.width = `${currentQrImageSize}px`; // Use currentQrImageSize
-            tempQrDiv.style.height = `${currentQrImageSize}px`; // Use currentQrImageSize
-            tempQrDiv.style.display = 'none';
-            document.body.appendChild(tempQrDiv);
-
-            qrCodeInstance = new QRCode(tempQrDiv, {
-                text: qrData,
-                width: currentQrImageSize, // Use currentQrImageSize
-                height: currentQrImageSize, // Use currentQrImageSize
-                colorDark: qrColor,
-                colorLight: bgColor,
-                correctLevel: QRCode.CorrectLevel.H
-            });
-
-            setTimeout(() => {
-                const generatedCanvas = tempQrDiv.querySelector('canvas');
-                if (!generatedCanvas) {
-                    showMessage("Could not generate QR Code.", 'error');
-                    document.body.removeChild(tempQrDiv);
-                    return;
-                }
-
-                qrCanvas.width = currentQrImageSize; // Use currentQrImageSize
-                qrCanvas.height = totalCanvasHeight;
-                const ctx = qrCanvas.getContext('2d');
-
-                ctx.fillStyle = bgColor;
-                ctx.fillRect(0, 0, currentQrImageSize, totalCanvasHeight); // Use currentQrImageSize
-
-                if (imageTitle) {
-                    ctx.font = `${titleFontSize}px Inter, sans-serif`;
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillStyle = qrColor;
-                    ctx.fillText(imageTitle, currentQrImageSize / 2, titleAreaHeight / 2); // Use currentQrImageSize
-                }
-
-                ctx.drawImage(generatedCanvas, 0, qrCodeYOffset, currentQrImageSize, currentQrImageSize); // Use currentQrImageSize
-
-                if (logoImage) {
-                    const logoSize = currentQrImageSize * 0.25;
-                    const x = (currentQrImageSize - logoSize) / 2;
-                    const y = (currentQrImageSize - logoSize) / 2;
-                    ctx.drawImage(logoImage, x, y + qrCodeYOffset, logoSize, logoSize);
-                }
-
-                qrcodeContainer.innerHTML = '';
-                qrcodeContainer.appendChild(qrCanvas);
-                qrCanvas.style.display = 'block';
-
-                document.body.removeChild(tempQrDiv);
-                showMessage("QR Code generated successfully!", 'success');
-            }, 100);
+            lines.push(current);
+            return lines;
         }
 
-        logoInput.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        logoImage = img;
-                        if (qrDataInput.value.trim()) {
-                            generateQRCode();
-                        }
+        function generate() {
+            if (genDebounce) clearTimeout(genDebounce);
+            
+            // Reduced debounce time for snappy immediate feel (150ms)
+            genDebounce = setTimeout(() => {
+                const text = dom.data.value.trim();
+                if (!text) return;
+
+                dom.load.classList.remove('hidden');
+                document.getElementById('empty').style.display = 'none';
+
+                const fontSize = Math.max(14, currentSize / 14);
+                const lineHeight = fontSize * 1.5;
+                const pad = 32;
+                
+                const ctx = dom.canvas.getContext('2d');
+                ctx.font = `700 ${fontSize}px Inter, sans-serif`;
+                
+                const useCap = dom.showCap.checked && dom.cap.value.trim();
+                let wrapped = useCap ? getLines(ctx, dom.cap.value.trim(), currentSize) : [];
+                let capH = wrapped.length > 0 ? (wrapped.length * lineHeight) + 20 : 0;
+
+                const finalW = currentSize + (pad * 2);
+                const finalH = currentSize + capH + (pad * 2);
+
+                const div = document.createElement('div');
+                new QRCode(div, {
+                    text: text, width: currentSize, height: currentSize,
+                    colorDark: dom.qrCol.value, colorLight: dom.bgCol.value,
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+
+                setTimeout(() => {
+                    const qr = div.querySelector('canvas');
+                    if (!qr) { dom.load.classList.add('hidden'); return; }
+
+                    dom.canvas.width = finalW;
+                    dom.canvas.height = finalH;
+                    ctx.fillStyle = dom.bgCol.value;
+                    ctx.fillRect(0, 0, finalW, finalH);
+
+                    if (useCap) {
+                        ctx.font = `700 ${fontSize}px Inter, sans-serif`;
+                        ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+                        ctx.fillStyle = dom.qrCol.value;
+                        wrapped.forEach((line, i) => ctx.fillText(line, finalW/2, pad + (i * lineHeight)));
+                    }
+
+                    ctx.drawImage(qr, pad, pad + capH);
+
+                    if (logoImg) {
+                        const lSz = currentSize * 0.22;
+                        const lx = (finalW - lSz) / 2;
+                        const ly = (currentSize - lSz) / 2 + pad + capH;
+                        
+                        ctx.beginPath();
+                        ctx.arc(lx + lSz/2, ly + lSz/2, (lSz/2) + 6, 0, Math.PI * 2);
+                        ctx.fillStyle = dom.bgCol.value; ctx.fill();
+                        
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.arc(lx + lSz/2, ly + lSz/2, lSz/2, 0, Math.PI * 2);
+                        ctx.clip();
+                        ctx.drawImage(logoImg, lx, ly, lSz, lSz);
+                        ctx.restore();
+                    }
+
+                    dom.canvas.style.display = 'block';
+                    dom.load.classList.add('hidden');
+                    save();
+                }, 100);
+            }, 150);
+        }
+
+        function save() {
+            localStorage.setItem('qr_v6_instant', JSON.stringify({
+                d: dom.data.value, c: dom.cap.value, q: dom.qrCol.value,
+                b: dom.bgCol.value, s: currentSize, t: dom.showCap.checked
+            }));
+        }
+
+        dom.logo.onchange = (e) => {
+            const f = e.target.files[0];
+            if (f) {
+                document.getElementById('fileName').innerText = f.name;
+                const r = new FileReader();
+                r.onload = (ev) => {
+                    const i = new Image();
+                    i.onload = () => {
+                        logoImg = i;
+                        dom.logoBox.innerHTML = `<img src="${ev.target.result}" class="w-full h-full object-cover">`;
+                        generate();
                     };
-                    img.onerror = () => {
-                        showMessage("Could not load logo image.", 'error');
-                        logoImage = null;
-                    };
-                    img.src = e.target.result;
+                    i.src = ev.target.result;
                 };
-                reader.readAsDataURL(file);
-            } else {
-                logoImage = null;
-                if (qrDataInput.value.trim()) {
-                    generateQRCode();
-                }
+                r.readAsDataURL(f);
             }
+        };
+
+        dom.download.onclick = () => {
+            if (dom.canvas.style.display === 'none') return;
+            const a = document.createElement('a');
+            a.download = `QR_Export_${Date.now()}.jpg`;
+            a.href = dom.canvas.toDataURL('image/jpeg', 0.95);
+            a.click();
+            showToast("Success! JPG Downloaded.");
+        };
+
+        document.querySelectorAll('.sz-btn').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.sz-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentSize = parseInt(btn.dataset.sz);
+                generate();
+            };
         });
 
-        imageTitleInput.addEventListener('input', () => {
-            if (qrDataInput.value.trim()) {
-                generateQRCode();
-            }
+        dom.reset.onclick = () => { localStorage.removeItem('qr_v6_instant'); location.reload(); };
+        
+        dom.qrCol.oninput = (e) => { dom.fgHex.innerText = e.target.value.toUpperCase(); generate(); };
+        dom.bgCol.oninput = (e) => { dom.bgHex.innerText = e.target.value.toUpperCase(); generate(); };
+        
+        // Immediate updates linked here
+        [dom.data, dom.cap, dom.showCap].forEach(el => {
+            el.addEventListener('input', generate);
         });
 
-        function downloadQRCode(format) {
-            if (!qrCanvas.getContext('2d') || qrCanvas.style.display === 'none') {
-                showMessage("Please generate QR Code before downloading.", 'error');
-                return;
-            }
-
-            // Attempt to download using a simple anchor tag with Data URL
-            const link = document.createElement('a');
-            link.download = `qrcode.${format}`;
-            if (format === 'png') {
-                link.href = qrCanvas.toDataURL('image/png');
-            } else if (format === 'jpg') {
-                link.href = qrCanvas.toDataURL('image/jpeg', 0.9);
-            }
-
-            // Append to body and trigger click
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link); // Clean up the link element
-
-            showMessage("QR Code downloaded as {format} successfully!", 'success', format);
-        }
-
-        // Event listeners for QR Image Size buttons (Small, Medium, Large)
-        sizeButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                sizeButtons.forEach(btn => btn.classList.remove('active-size'));
-                button.classList.add('active-size');
-                currentQrImageSize = parseInt(button.dataset.size); // Update QR image size
-                if (qrDataInput.value.trim()) {
-                    generateQRCode();
-                }
-            });
-        });
-
-        // Event listener for Clear Settings button
-        clearSettingsBtn.addEventListener('click', () => {
-            // Reset all input fields to default values
-            qrDataInput.value = "https://www.google.com";
-            imageTitleInput.value = "";
-            qrColorInput.value = "#000000";
-            bgColorInput.value = "#ffffff";
-            logoInput.value = ""; // Clear selected file
-            logoImage = null; // Clear loaded logo image
-
-            // Reset QR image size to medium and update active button
-            currentQrImageSize = qrImageSizeMap.medium;
-            sizeButtons.forEach(btn => btn.classList.remove('active-size'));
-            const defaultQrSizeButton = document.querySelector(`.size-buttons-group button[data-size="${qrImageSizeMap.medium}"]`);
-            if (defaultQrSizeButton) {
-                defaultQrSizeButton.classList.add('active-size');
-            }
-
-            // Regenerate QR code with default settings
-            generateQRCode();
-            showMessage("Settings cleared to default values.", 'success');
-        });
-
-        // --- ADDED MISSING EVENT LISTENERS HERE ---
-        // Event listener for Generate button
-        generateBtn.addEventListener('click', generateQRCode);
-
-        // Event listeners for Download buttons
-        downloadPngBtn.addEventListener('click', () => {
-            downloadQRCode('png');
-        });
-
-        downloadJpgBtn.addEventListener('click', () => {
-            downloadQRCode('jpg');
-        });
-        // --- END ADDED MISSING EVENT LISTENERS ---
-
-
-        // Initial generation on load
         window.onload = () => {
-            // Set default active QR image size button
-            const defaultQrSizeButton = document.querySelector(`.size-buttons-group button[data-size="${qrImageSizeMap.medium}"]`);
-            if (defaultQrSizeButton) {
-                defaultQrSizeButton.classList.add('active-size');
+            const sv = localStorage.getItem('qr_v6_instant');
+            if (sv) {
+                const c = JSON.parse(sv);
+                dom.data.value = c.d; dom.cap.value = c.c;
+                dom.qrCol.value = c.q; dom.bgCol.value = c.b;
+                currentSize = c.s; dom.showCap.checked = c.t;
+                dom.fgHex.innerText = c.q.toUpperCase(); dom.bgHex.innerText = c.b.toUpperCase();
+                document.querySelectorAll('.sz-btn').forEach(b => {
+                    b.classList.remove('active');
+                    if (parseInt(b.dataset.sz) === c.s) b.classList.add('active');
+                });
             }
-            generateQRCode();
+            generate();
         };
     </script>
 </body>
