@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Your QR Code | Premium Generator</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- โหลดฟอนต์ Mali เป็นฟอนต์หลัก และฟอนต์อื่นๆ สำหรับระบบสำรอง -->
+    <link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Premium Color System */
+            /* ระบบสีพรีเมียม */
             --primary: #EC4899;
             --primary-soft: #FCE7F3;
             --secondary: #8B5CF6;
@@ -23,7 +24,8 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            /* ตั้งค่า Mali เป็นฟอนต์หลักทั้งหน้าเว็บ */
+            font-family: 'Mali', cursive, sans-serif;
             background-color: var(--bg-page);
             min-height: 100vh;
             display: flex;
@@ -34,23 +36,37 @@
             margin: 0;
             position: relative;
             overflow-x: hidden;
+            transition: background-color 0.3s ease;
         }
 
-        /* Ambient Layers in Background */
+        /* เลเยอร์พื้นหลังโปร่งแสง */
         .ambient-blob {
             position: fixed;
             border-radius: 50%;
             filter: blur(100px);
             z-index: -1;
             opacity: 0.5;
-            animation: float 20s infinite alternate;
+            animation: float-bg 20s infinite alternate;
         }
-        @keyframes float {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(100px, 50px); }
+        @keyframes float-bg {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(100px, 50px) scale(1.1); }
         }
 
-        /* Main Card with Premium Depth */
+        /* อนิเมชันไอคอนขยับ */
+        @keyframes float-icon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        .animate-float { animation: float-icon 3s ease-in-out infinite; }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.2); }
+        }
+        .animate-sparkle { animation: sparkle 2s ease-in-out infinite; }
+
+        /* การ์ดหลัก */
         .main-card {
             background: var(--card-bg);
             border-radius: 32px;
@@ -72,7 +88,7 @@
             font-weight: 800;
         }
 
-        /* QR Preview Section - Fixed container size to prevent overflow */
+        /* ส่วน Preview QR */
         .preview-card {
             background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(12px);
@@ -112,13 +128,15 @@
         }
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
 
-        /* Form Controls */
+        /* การตั้งค่า Input */
         .input-group label {
             font-size: 0.85rem;
             font-weight: 700;
             color: var(--text-soft);
             margin-bottom: 8px;
-            display: block;
+            display: flex;
+            align-items: center;
+            gap: 8px;
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
@@ -139,7 +157,7 @@
             box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.1);
         }
 
-        /* Action Button */
+        /* ปุ่ม Download */
         .btn-download {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
@@ -161,10 +179,12 @@
             filter: brightness(1.05);
             box-shadow: 0 16px 40px rgba(236, 72, 153, 0.45);
         }
+        .btn-download svg { transition: transform 0.3s ease; }
+        .btn-download:hover svg { transform: translateY(2px); }
 
-        /* Size Tabs Visibility Fix */
+        /* ปุ่มเลือกขนาด */
         .size-group {
-            background: #F3F4F6;
+            background: #E5E7EB;
             padding: 4px;
             border-radius: 18px;
             display: grid;
@@ -175,14 +195,14 @@
             padding: 12px 4px;
             border-radius: 14px;
             font-size: 0.75rem;
-            font-weight: 700;
+            font-weight: 800;
             color: #4B5563;
             transition: all 0.2s ease;
             text-align: center;
             background: transparent;
         }
         .sz-btn:hover { color: var(--text-main); background: rgba(255, 255, 255, 0.5); }
-        .sz-btn.active { background: white; color: var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.06); }
+        .sz-btn.active { background: white; color: var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
 
         .color-badge {
             background: var(--input-bg);
@@ -194,7 +214,7 @@
             gap: 8px;
         }
 
-        /* Toggle Switch Custom */
+        /* Toggle Switch */
         .toggle-switch {
             position: relative;
             display: inline-block;
@@ -235,11 +255,11 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             color: var(--text-soft);
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
-        .clear-btn:hover { transform: rotate(180deg); color: var(--primary); border-color: var(--primary-soft); }
+        .clear-btn:hover { transform: rotate(180deg); color: var(--primary); border-color: var(--primary-soft); box-shadow: 0 8px 20px rgba(236, 72, 153, 0.2); }
 
         @media (max-width: 768px) {
             .main-card { padding: 32px 24px; border-radius: 0; }
@@ -249,29 +269,32 @@
 </head>
 <body>
 
-    <!-- Ambient Decor Layers -->
+    <!-- พื้นหลังเลเยอร์สีฟุ้ง -->
     <div class="ambient-blob w-[500px] h-[500px] bg-pink-100 top-[-150px] left-[-150px]"></div>
     <div class="ambient-blob w-[400px] h-[400px] bg-indigo-100 bottom-[-100px] right-[-100px]"></div>
 
-    <!-- Notification Toast -->
+    <!-- ส่วนแจ้งเตือน -->
     <div id="toast" class="fixed top-6 left-1/2 -translate-x-1/2 bg-white px-8 py-4 rounded-2xl shadow-2xl z-[2000] flex items-center gap-3 font-bold transition-all -translate-y-24 border border-pink-100">
-        <span class="text-pink-500">✨</span>
+        <span class="text-pink-500 animate-sparkle">✨</span>
         <span id="toastText"></span>
     </div>
 
     <div class="main-card">
-        <!-- Header - Simple and Clean -->
-        <div class="mb-12 text-center md:text-left">
+        <!-- หัวข้อแอป -->
+        <div class="mb-12 text-center md:text-left flex items-center gap-4">
+            <div class="bg-gradient-to-br from-pink-500 to-violet-500 p-2.5 rounded-2xl shadow-lg animate-float">
+                <svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M4 4h7v7H4V4zm2 2v3h3V6H6zm2 2H7V7h1V6H6v1h1v1h1V7h1v1H8zM4 13h7v7H4v-7zm2 2v3h3v-3H6zm1 1h1v1H7v-1zm7-12h7v7h-7V4zm2 2v3h3V6h-3zm1 4h1V9h-1v1zm3 3h3v2h-3v-2zm-3 3h3v2h-3v-2zm3-3h-3v2h3v-2zm-3 3h-3v2h3v-2zm3-3h3v2h-3v-2zm-3 3h3v2h-3v-2z"/></svg>
+            </div>
             <h1 class="text-4xl title-gradient">Create Your QR</h1>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
             
-            <!-- Left Side: Product Preview -->
+            <!-- ฝั่งซ้าย: Preview รูปภาพ -->
             <div class="flex flex-col gap-8 order-2 md:order-1">
                 <div>
                     <span class="section-title">
-                        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24" class="inline mr-1"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24" class="inline mr-1 text-pink-500 animate-pulse"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
                         Product Preview
                     </span>
                     <div class="preview-card" id="qr-container">
@@ -281,7 +304,7 @@
                         <canvas id="qrCanvas" style="display: none;"></canvas>
                         <div id="empty" class="text-center opacity-10">
                             <svg class="mx-auto mb-4" width="80" height="80" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h7v7H4V4zm2 2v3h3V6H6zm2 2H7V7h1V6H6v1h1v1h1V7h1v1H8zM4 13h7v7H4v-7zm2 2v3h3v-3H6zm1 1h1v1H7v-1zm7-12h7v7h-7V4zm2 2v3h3V6h-3zm1 4h1V9h-1v1zm3 3h3v2h-3v-2zm-3 3h3v2h-3v-2zm3-3h-3v2h3v-2zm-3 3h-3v2h3v-2zm3-3h3v2h-3v-2zm-3 3h3v2h-3v-2z"/></svg>
-                            <p class="text-xs font-bold uppercase tracking-widest">Generating Preview...</p>
+                            <p class="text-xs font-bold uppercase tracking-widest">Generating...</p>
                         </div>
                     </div>
                 </div>
@@ -292,12 +315,12 @@
                 </button>
             </div>
 
-            <!-- Right Side: Configuration -->
+            <!-- ฝั่งขวา: ส่วนตั้งค่า -->
             <div class="flex flex-col gap-10 order-1 md:order-2">
                 
                 <div class="input-group">
-                    <label class="flex items-center gap-2 !text-pink-500">
-                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                    <label class="!text-pink-500">
+                        <svg class="animate-float" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
                         QR Content
                     </label>
                     <input type="text" id="qrData" class="input-field font-semibold" placeholder="URL or Text..." value="https://www.google.com">
@@ -305,7 +328,10 @@
 
                 <div class="input-group">
                     <div class="flex justify-between items-center mb-2">
-                        <label class="!mb-0">Caption Text</label>
+                        <label class="!mb-0">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                            Caption Text
+                        </label>
                         <label class="toggle-switch">
                             <input type="checkbox" id="toggleCap" checked>
                             <span class="toggle-slider"></span>
@@ -314,17 +340,19 @@
                     <input type="text" id="capInput" class="input-field" placeholder="Tagline appearing on image...">
                 </div>
 
+                <!-- นำ Typography Style Dropdown ออกแล้ว -->
+
                 <div class="grid grid-cols-2 gap-6">
                     <div class="input-group">
                         <label>Foreground</label>
-                        <div class="color-badge">
+                        <div class="color-badge transition-transform hover:scale-105">
                             <input type="color" id="qrColor" value="#000000" class="w-8 h-8 cursor-pointer rounded-lg border-none bg-none">
                             <span id="fgHex" class="font-mono text-[10px] font-bold opacity-60">#000000</span>
                         </div>
                     </div>
                     <div class="input-group">
                         <label>Canvas</label>
-                        <div class="color-badge">
+                        <div class="color-badge transition-transform hover:scale-105">
                             <input type="color" id="bgColor" value="#ffffff" class="w-8 h-8 cursor-pointer rounded-lg border-none bg-none">
                             <span id="bgHex" class="font-mono text-[10px] font-bold opacity-60">#FFFFFF</span>
                         </div>
@@ -345,7 +373,7 @@
                     <div class="relative group">
                         <input type="file" id="logoInp" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer z-10">
                         <div class="flex items-center gap-4 bg-gray-50 p-4 rounded-2xl border-2 border-dashed border-gray-200 transition-all group-hover:border-pink-400 group-hover:bg-pink-50/30">
-                            <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm overflow-hidden border-2 border-white" id="logoPreview">
+                            <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm overflow-hidden border-2 border-white group-hover:animate-float" id="logoPreview">
                                 <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                             </div>
                             <div class="flex flex-col">
@@ -358,8 +386,8 @@
             </div>
         </div>
 
-        <!-- Float Refresh -->
-        <button id="clearBtn" class="clear-btn" title="Reset fields">
+        <!-- ปุ่มรีเซ็ต -->
+        <button id="clearBtn" class="clear-btn" title="Reset all fields">
             <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
         </button>
     </div>
@@ -386,6 +414,7 @@
 
         let logoImg = null;
         let currentSize = 256;
+        let currentFont = 'Mali'; // ตั้งค่า Mali เป็นฟอนต์หลักถาวร
         let genDebounce = null;
 
         function showToast(msg) {
@@ -394,7 +423,6 @@
             setTimeout(() => dom.toast.classList.remove('!-translate-y-0'), 3000);
         }
 
-        // Smart text wrapping for Canvas
         function getLines(ctx, text, maxWidth) {
             const chars = text.split('');
             let lines = [];
@@ -415,7 +443,6 @@
         function generate() {
             if (genDebounce) clearTimeout(genDebounce);
             
-            // Reduced debounce time for snappy immediate feel (150ms)
             genDebounce = setTimeout(() => {
                 const text = dom.data.value.trim();
                 if (!text) return;
@@ -428,7 +455,8 @@
                 const pad = 32;
                 
                 const ctx = dom.canvas.getContext('2d');
-                ctx.font = `700 ${fontSize}px Inter, sans-serif`;
+                // ใช้ Mali ใน Canvas
+                ctx.font = `700 ${fontSize}px "${currentFont}", cursive, sans-serif`;
                 
                 const useCap = dom.showCap.checked && dom.cap.value.trim();
                 let wrapped = useCap ? getLines(ctx, dom.cap.value.trim(), currentSize) : [];
@@ -454,7 +482,7 @@
                     ctx.fillRect(0, 0, finalW, finalH);
 
                     if (useCap) {
-                        ctx.font = `700 ${fontSize}px Inter, sans-serif`;
+                        ctx.font = `700 ${fontSize}px "${currentFont}", cursive, sans-serif`;
                         ctx.textAlign = 'center'; ctx.textBaseline = 'top';
                         ctx.fillStyle = dom.qrCol.value;
                         wrapped.forEach((line, i) => ctx.fillText(line, finalW/2, pad + (i * lineHeight)));
@@ -483,11 +511,11 @@
                     dom.load.classList.add('hidden');
                     save();
                 }, 100);
-            }, 150);
+            }, 50); 
         }
 
         function save() {
-            localStorage.setItem('qr_v6_instant', JSON.stringify({
+            localStorage.setItem('qr_v11_mali', JSON.stringify({
                 d: dom.data.value, c: dom.cap.value, q: dom.qrCol.value,
                 b: dom.bgCol.value, s: currentSize, t: dom.showCap.checked
             }));
@@ -529,24 +557,24 @@
             };
         });
 
-        dom.reset.onclick = () => { localStorage.removeItem('qr_v6_instant'); location.reload(); };
+        dom.reset.onclick = () => { localStorage.removeItem('qr_v11_mali'); location.reload(); };
         
         dom.qrCol.oninput = (e) => { dom.fgHex.innerText = e.target.value.toUpperCase(); generate(); };
         dom.bgCol.oninput = (e) => { dom.bgHex.innerText = e.target.value.toUpperCase(); generate(); };
         
-        // Immediate updates linked here
         [dom.data, dom.cap, dom.showCap].forEach(el => {
             el.addEventListener('input', generate);
         });
 
         window.onload = () => {
-            const sv = localStorage.getItem('qr_v6_instant');
+            const sv = localStorage.getItem('qr_v11_mali');
             if (sv) {
                 const c = JSON.parse(sv);
                 dom.data.value = c.d; dom.cap.value = c.c;
                 dom.qrCol.value = c.q; dom.bgCol.value = c.b;
                 currentSize = c.s; dom.showCap.checked = c.t;
                 dom.fgHex.innerText = c.q.toUpperCase(); dom.bgHex.innerText = c.b.toUpperCase();
+                
                 document.querySelectorAll('.sz-btn').forEach(b => {
                     b.classList.remove('active');
                     if (parseInt(b.dataset.sz) === c.s) b.classList.add('active');
